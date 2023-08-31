@@ -140,7 +140,7 @@ const isCurrentPath = (path) => {
       <SidebarLink
         :to="{ name: 'EleveInscription' }"
         :active="isCurrentRoute('EleveInscription')"
-        icon="mdi:shield-star-outline"
+        icon="mdi:register-outline" 
         title="Fiche d'inscription"
       >
       </SidebarLink>
@@ -156,28 +156,28 @@ const isCurrentPath = (path) => {
       <SidebarLink
         :to="{ name: 'ListEleves' }"
         :active="isCurrentRoute('ListEleves')"
-        icon="mdi:shield-star-outline"
+        icon="ph:student-bold"
         title="Gestion des élèves"
       />
 
       <SidebarLink
         :to="{ name: 'ListTuteurs' }"
         :active="isCurrentRoute('ListTuteurs')"
-        icon="mdi:shield-star-outline"
+        icon="ri:parent-line"
         title="Gestion des tuteurs"
       />
 
       <SidebarLink
         :to="{ name: 'AdministratifProfile' }"
         :active="isCurrentRoute('AdministratifProfile')"
-        icon="mdi:shield-star-outline"
+        icon="material-symbols:home-repair-service-outline"
         title="Gestion des services"
       />
 
       <SidebarLink
         :to="{ name: 'AdministratifProfile' }"
         :active="isCurrentRoute('AdministratifProfile')"
-        icon="mdi:shield-star-outline"
+        icon="ri:bus-line"
         title="Gestion du transport"
       />
 
@@ -185,7 +185,7 @@ const isCurrentPath = (path) => {
       <SidebarLink
         :to="{ name: 'ListClasses' }"
         :active="isCurrentRoute('ListClasses')"
-        icon="mdi:shield-star-outline"
+        icon="mdi:google-classroom"
         title="Gestion des classes"
       />
 
@@ -193,7 +193,7 @@ const isCurrentPath = (path) => {
         :to="{ name: 'AdministratifProfile' }"
         :active="isCurrentRoute('AdministratifProfile')"
         icon="mdi:shield-star-outline"
-        title="Administratif Profile"
+        title="Profile"
       >
       </SidebarLink>
     </template>

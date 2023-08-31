@@ -534,6 +534,13 @@ export default {
               status: paiement.status,
             });
 
+            
+            $toast.success("Payment updated successfully!", {
+              position: "bottom-right",
+              duration: 3000,
+            });
+          
+
             totalAvance -= avanceToApply;
           }
         }

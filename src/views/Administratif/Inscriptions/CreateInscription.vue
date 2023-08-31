@@ -368,19 +368,7 @@
                   >
                     Classe
                   </label>
-                  <!-- <select
-                    id="classe"
-                    v-model="user.classe"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  >
-                    <option
-                      v-for="(classe, index) in classes"
-                      :key="index"
-                      :value="classe.nom"
-                    >
-                      {{ classe.nom }}
-                    </option>
-                  </select> -->
+
                   <input
                     id="classe"
                     type="text"
@@ -425,7 +413,7 @@
                   >
                     Niveau
                   </label>
-                
+
                   <select
                     id="niveau"
                     v-model="user.niveau"
@@ -636,8 +624,8 @@ import axiosClient from "../../../axios";
 import jsPDF from "jspdf";
 import axios from "axios";
 
-import {useToast} from 'vue-toast-notification';
-import 'vue-toast-notification/dist/theme-sugar.css';
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
 
 const $toast = useToast();
 
@@ -724,7 +712,7 @@ export default {
       handler(options) {
         const currentYear = new Date().getFullYear();
         const defaultYear = options.find((option) =>
-          option.startsWith(currentYear.toString()),
+          option.startsWith(currentYear.toString())
         );
         this.user.anneeScolaire = defaultYear;
       },
@@ -749,11 +737,24 @@ export default {
         .then((response) => {
           const services = response.data;
           this.annualServices = services.filter(
-            (service) => service.type === "annuel",
+            (service) => service.type === "annuel"
           );
+
+          // for (const service of this.annualServices) {
+          //   this.customAnnualPrices[service.id] = (2000.0).toFixed(2);
+          // }
+
           this.monthlyServices = services.filter(
-            (service) => service.type === "mensuel",
+            (service) => service.type === "mensuel"
           );
+
+          // for (const service of this.monthlyServices) {
+          //   if (service.service === "Transport")
+          //     this.customMonthlyPrices[service.id] = (400.0).toFixed(2);
+          //   else {
+          //     this.customMonthlyPrices[service.id] = (1700.0).toFixed(2);
+          //   }
+          // }
         })
         .catch((error) => {
           console.error("Error fetching services:", error);
@@ -804,7 +805,7 @@ export default {
       this.filteredParents = this.parents.filter((parent) =>
         parent.nom_complet
           .toLowerCase()
-          .includes(this.selectedParent.toLowerCase()),
+          .includes(this.selectedParent.toLowerCase())
       );
     },
     selectParent(parent) {
@@ -822,7 +823,7 @@ export default {
 
       try {
         const response = await axiosClient.get(
-          `/administratif/parents/${this.selectedParent}`,
+          `/administratif/parents/${this.selectedParent}`
         );
         const parent = response.data;
 
@@ -852,9 +853,9 @@ export default {
     },
     async fetchNationalities() {
       try {
-        const response = await axios.get("https://restcountries.com/v3/all");
+        const response = await axiosClient.get("https://restcountries.com/v3/all");
         this.nationalities = response.data.map(
-          (country) => country.name.common,
+          (country) => country.name.common
         );
       } catch (error) {
         console.error("Error fetching nationalities:", error);
@@ -889,7 +890,7 @@ export default {
 
         const response = await axiosClient.post(
           "/administratif/inscription/create",
-          requestData,
+          requestData
         );
 
         // console.log('response, ', response);
