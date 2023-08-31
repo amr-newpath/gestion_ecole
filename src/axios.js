@@ -4,6 +4,7 @@ import store from "./store";
 
 const axiosClient = axios.create({
   baseURL: "http://localhost:8000/api",
+   // baseURL: "http://167.86.98.194/api",
 });
 
 
