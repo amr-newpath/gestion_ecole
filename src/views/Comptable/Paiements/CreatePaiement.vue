@@ -142,9 +142,9 @@
             </label>
             <div class="flex mx-16">
               <span class="text-gray-600">
-                {{ fraisInscriptionPrice }} DHs -
-                <span class="text-yellow-500"
-                  >(Reste: {{ resteFraisInscription }})</span
+                {{ fraisInscriptionPrice }} DHs 
+                <span v-if="resteFraisInscription" class="text-yellow-500"
+                  >- (Reste: {{ resteFraisInscription }})</span
                 ></span
               >
             </div>
@@ -182,14 +182,14 @@
                 </label>
               </div>
             </div>
-            <div class="flex-grow mx-12">
+            <div class="flex-grow mx-24">
               <div v-for="(month, monthIndex) in months" :key="monthIndex">
                 <span class="text-gray-600">
                   {{ getPriceForMonth(month)
                   }}<span class="mx-2"
-                    >DHs -
+                    >DHs 
                     <span v-if="getRestePriceMonth(month)" class="text-yellow-500"
-                      >(Reste: {{ getRestePriceMonth(month) }})</span
+                      >- (Reste: {{ getRestePriceMonth(month) }})</span
                     >
                   </span>
                 </span>
