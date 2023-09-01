@@ -4,6 +4,7 @@ import StatisticsSection from '@/components/pages/dashboard/StatisticsSection.vu
 import SalesSection from '@/components/pages/dashboard/SalesSection.vue'
 import LatestSection from '@/components/pages/dashboard/LatestSection.vue'
 import ElevesServices from '@/components/pages/dashboard/ElevesServices.vue'
+import ElevesMaleFemale from '@/components/pages/dashboard/ElevesMaleFemale.vue'
 
 import Button from '@/components/Button.vue'
 import { useStore } from 'vuex'
@@ -26,7 +27,11 @@ import { useStore } from 'vuex'
         <!-- Statistics section -->
         <!-- <StatisticsSection /> -->
 
+
         <SalesSection />
+
+        <ElevesMaleFemale />
+
         <ElevesServices />
         
         <!-- Sales section -->
