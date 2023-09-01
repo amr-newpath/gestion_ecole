@@ -600,6 +600,9 @@ export default {
 
               // Reduce the original total avance by the amount applied to this service paiement
               originalTotalAvance -= avanceToApplyToService;
+
+              this.$router.push({ name: 'CreatePaiement' });
+
             }
           }
         }
@@ -785,6 +788,10 @@ export default {
             position: "bottom-right",
             duration: 3000,
           });
+
+          // this.$router.push({ name: 'CreatePaiement' });
+          
+
           // You might want to perform additional actions, show a success message, etc.
         } catch (error) {
           // console.error("Error creating payment:", error);

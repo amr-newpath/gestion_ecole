@@ -123,7 +123,7 @@ const routes = [
     meta: { requiresAuth: true, roles: ["Admin"] },
     children: [
       {
-        path: '/admin',
+        path: "/admin",
         component: () => import("@/views/Index.vue"),
         name: "AdminDashboard",
       },
@@ -172,7 +172,8 @@ const routes = [
       },
       {
         path: "inscriptions/creer-eleve",
-        component: () => import("@/views/Administratif/Inscriptions/CreateInscription.vue"),
+        component: () =>
+          import("@/views/Administratif/Inscriptions/CreateInscription.vue"),
         name: "EleveInscription",
       },
       {
@@ -182,12 +183,20 @@ const routes = [
       },
       {
         path: "tuteurs/",
-        component: () => import("@/views/Administratif/Tuteurs/ListTuteurs.vue"),
+        component: () =>
+          import("@/views/Administratif/Tuteurs/ListTuteurs.vue"),
         name: "ListTuteurs",
       },
       {
+        path: "services/",
+        component: () =>
+          import("@/views/Administratif/Services/ListServices.vue"),
+        name: "ListServices",
+      },
+      {
         path: "classes/",
-        component: () => import("@/views/Administratif/Classes/TableClasses.vue"),
+        component: () =>
+          import("@/views/Administratif/Classes/TableClasses.vue"),
         name: "ListClasses",
       },
       // {
@@ -219,28 +228,33 @@ const routes = [
       },
       {
         path: "paiements/create",
-        component: () => import("@/views/Comptable/Paiements/CreatePaiement.vue"),
-        name: "CreatePaiement"
+        component: () =>
+          import("@/views/Comptable/Paiements/CreatePaiement.vue"),
+        name: "CreatePaiement",
       },
       {
         path: "paiements/menusalite",
-        component: () => import("@/views/Comptable/Paiements/ConsultationMensualite.vue"),
-        name: "MensualitePaiement"
+        component: () =>
+          import("@/views/Comptable/Paiements/ConsultationMensualite.vue"),
+        name: "MensualitePaiement",
       },
       {
         path: "paiements/rubrique",
-        component: () => import("@/views/Comptable/Paiements/ConsultationRubrique.vue"),
-        name: "RubriquePaiement"
+        component: () =>
+          import("@/views/Comptable/Paiements/ConsultationRubrique.vue"),
+        name: "RubriquePaiement",
       },
       {
         path: "paiements/cheque",
-        component: () => import("@/views/Comptable/Paiements/ChequePaiement.vue"),
-        name: "ChequePaiement"
+        component: () =>
+          import("@/views/Comptable/Paiements/ChequePaiement.vue"),
+        name: "ChequePaiement",
       },
       {
         path: "paiements/rapport",
-        component: () => import("@/views/Comptable/Paiements/RapportPaiement.vue"),
-        name: "RapportPaiement"
+        component: () =>
+          import("@/views/Comptable/Paiements/RapportPaiement.vue"),
+        name: "RapportPaiement",
       },
     ],
   },

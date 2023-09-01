@@ -168,8 +168,8 @@ const isCurrentPath = (path) => {
       />
 
       <SidebarLink
-        :to="{ name: 'AdministratifProfile' }"
-        :active="isCurrentRoute('AdministratifProfile')"
+        :to="{ name: 'ListServices' }"
+        :active="isCurrentRoute('ListServices')"
         icon="material-symbols:home-repair-service-outline"
         title="Gestion des services"
       />
