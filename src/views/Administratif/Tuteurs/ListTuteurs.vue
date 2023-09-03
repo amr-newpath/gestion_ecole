@@ -97,10 +97,7 @@
                         @click="editParent(parent)"
                         class="flex items-center justify-center px-4 py-2 rounded-md text-green-500 bg-white hover:bg-green-50 transition duration-300 focus:outline-none focus:ring focus:ring-green-200"
                       >
-                        <font-awesome-icon
-                          :icon="['fas', 'dollar-sign']"
-                          class="h-5 w-5 mr-1"
-                        />
+                      <i class="fa fa-edit mx-2"></i>
                         Edit
                       </button>
                       <!-- <button

@@ -48,7 +48,11 @@
                 </tr>
               </thead>
               <tbody class="text-sm divide-y divide-gray-100">
-                <tr v-for="(service, index) in filteredServices" :key="index">
+                <tr
+                  v-for="(service, index) in filteredServices"
+                  :key="index"
+                  class="transition-transform hover:scale-101 hover:bg-gray-100"
+                >
                   <td class="p-4 whitespace-nowrap">
                     <div class="text-left">{{ service.service }}</div>
                   </td>
@@ -61,40 +65,36 @@
                     <div class="flex flex-col items-center space-y-2">
                       <button
                         @click="editService(service)"
-                        class="flex items-center justify-center px-4 py-2 rounded-md text-green-500 bg-white hover:bg-green-50 transition duration-300 focus:outline-none focus:ring focus:ring-green-200"
+                        class="flex items-center justify-center px-5 py-2 rounded-md text-green-500 bg-white hover:bg-green-50 transition duration-300 focus:outline-none focus:ring focus:ring-green-200"
                       >
-                        <font-awesome-icon
-                          :icon="['fas', 'dollar-sign']"
-                          class="h-5 w-5 mr-1"
-                        />
-                        Edit
+                        <i class="fa fa-edit mx-2"></i> Edit
                       </button>
+
                       <button
                         @click="deleteService(service.id)"
-                        class="flex items-center justify-center px-4 py-2 rounded-md text-blue-500 bg-white hover:bg-green-50 transition duration-300 focus:outline-none focus:ring focus:ring-green-200"
+                        class="flex items-center justify-center px-3 py-2 rounded-md text-blue-500 bg-white hover:bg-red-50 transition duration-300 focus:outline-none focus:ring focus:ring-red-200"
                       >
-                        <font-awesome-icon
-                          :icon="['fas', 'dollar-sign']"
-                          class="h-5 w-5 mr-1"
-                        />
-                        Delete
+                        <i class="fa fa-trash mx-2"></i> Delete
                       </button>
                     </div>
                   </td>
                 </tr>
-                <tr>
+                <tr
+                  class="transition-transform hover:scale-101 hover:bg-gray-100"
+                >
                   <td
                     colspan="3"
                     class="p-8 whitespace-nowrap text-lg font-semibold text-right bg-gray-50"
                   >
                     Total Services:
                     <span class="text-green-500 text-lg mx-2">
-                      {{ filteredServices.length }}</span
-                    >
+                      {{ filteredServices.length }}
+                    </span>
                   </td>
                 </tr>
               </tbody>
             </table>
+
             <div class="flex justify-center items-center h-32" v-else>
               <div
                 class="w-12 h-12 border-t-4 border-blue-500 border-solid rounded-full animate-spin"

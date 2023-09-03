@@ -206,11 +206,45 @@
           </form>
 
           <!-- Step 2: Eleve Information -->
-          <form v-if="step === 2">
+          <form v-if="step === 2" enctype="multipart/form-data">
             <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
               Eleve Information
             </h6>
+
             <div class="flex flex-wrap">
+              <!-- Image Upload -->
+              <div class="w-full lg:w-12/12 px-4">
+                <div class="relative w-full mb-3">
+                  <label
+                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                    for="image-upload"
+                  >
+                    Upload an Image
+                  </label>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    ref="imageInput"
+                    @change="handleImageUpload"
+                    style="display: none"
+                  />
+                  <button
+                    type="button"
+                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    @click="openImageUploader"
+                  >
+                    Click to Upload
+                  </button>
+                  <img
+                    v-if="user.image"
+                    :src="user.image"
+                    alt="Uploaded Image"
+                    style="max-width: 30%"
+                    class="mt-4 mb-8 mx-auto"
+                  />
+                </div>
+              </div>
               <div class="w-full lg:w-6/12 px-4">
                 <div class="relative w-full mb-3">
                   <label
@@ -620,9 +654,7 @@
 
 <script>
 import axiosClient from "../../../axios";
-// import UserInfoModal from '@/components/UserInfoModal';
 import jsPDF from "jspdf";
-import axios from "axios";
 
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
@@ -634,7 +666,7 @@ export default {
     // VueToast,
   },
   data() {
-    console.log(this.selectedParent);
+    // console.log(this.selectedParent);
 
     return {
       parentStatus: "",
@@ -662,6 +694,7 @@ export default {
         dateNaissance: "",
         sexe: "Male",
         nat: "Morocco",
+        image: "",
         adresse: "",
         etablissementPre: "",
         anneeScolaire: "",
@@ -719,6 +752,24 @@ export default {
     },
   },
   methods: {
+    openImageUploader() {
+      // Access the file input directly using the ref
+      this.$refs.imageInput.click();
+    },
+    handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        // You can display the uploaded image, for example:
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.user.image = e.target.result;
+        };
+
+        reader.readAsDataURL(file);
+
+        // You can also handle the file upload here and send it to your server if needed.
+      }
+    },
     formatDateForDatabase() {
       if (this.user.dateNaissance) {
         const dateParts = this.user.dateNaissance.split("-");
@@ -792,7 +843,7 @@ export default {
         const response = await axiosClient.get("/administratif/parents"); // Replace with your Laravel API endpoint
         this.parents = response.data;
 
-        console.log(this.parents);
+        // console.log(this.parents);
       } catch (error) {
         console.error("Error fetching parents:", error);
       }
@@ -853,7 +904,9 @@ export default {
     },
     async fetchNationalities() {
       try {
-        const response = await axiosClient.get("https://restcountries.com/v3/all");
+        const response = await axiosClient.get(
+          "https://restcountries.com/v3/all"
+        );
         this.nationalities = response.data.map(
           (country) => country.name.common
         );
@@ -869,6 +922,8 @@ export default {
         this.user.adresse = this.user.pereAdresse;
         // this.user.situationParents = this.user.pereSituation;
         // this.user.classe_id = 1
+
+        // console.log(this.user.image);
 
         this.formatDateForDatabase();
 
@@ -886,7 +941,7 @@ export default {
           // prenom: this.user.prenom
         };
 
-        console.log("requestData, ", requestData);
+        // console.log("requestData, ", requestData);
 
         const response = await axiosClient.post(
           "/administratif/inscription/create",
