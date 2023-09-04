@@ -1,14 +1,401 @@
-<script setup>
-// import PageComponent from '../../components/PageComponent.vue';
-</script>
-
 <template>
+  <div class="p-4">
+    <div class="bg-white justify-center rounded-lg p-6 shadow-md">
+      <h2 class="text-2xl font-semibold mb-4">Administratif Profile</h2>
 
-<div>
-  <p>Comptable Profile</p>
+      <!-- Display Name -->
+      <div class="flex items-center mb-2">
+        <div class="w-1/3 font-medium">Nom:</div>
+        <div class="w-2/3">
+          <template v-if="!isEditingName">
+            {{ adminProfile.nom }}
+            <button @click="toggleEdit('name')" class="ml-2 text-blue-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15.293 5.293a1 1 0 011.414 0l2 2a1 1 0 010 1.414L8.414 19H6v-2.414l10.293-10.293zM19 6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2v-8h2a2 2 0 002-2v-2z"
+                />
+              </svg>
+            </button>
+          </template>
+          <template v-else>
+            <input v-model="tempName" class="border rounded-md px-2 py-1" />
+            <button @click="saveEdit('name')" class="ml-2 text-green-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </button>
+            <button @click="cancelEdit('name')" class="ml-2 text-red-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </template>
+        </div>
+      </div>
 
-</div>
+      <!-- Display Prenom -->
+      <div class="flex items-center mb-2">
+        <div class="w-1/3 font-medium">Prenom:</div>
+        <div class="w-2/3">
+          <template v-if="!isEditingPrenom">
+            {{ adminProfile.prenom }}
+            <button @click="toggleEdit('prenom')" class="ml-2 text-blue-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15.293 5.293a1 1 0 011.414 0l2 2a1 1 0 010 1.414L8.414 19H6v-2.414l10.293-10.293zM19 6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2v-8h2a2 2 0 002-2v-2z"
+                />
+              </svg>
+            </button>
+          </template>
+          <template v-else>
+            <input v-model="tempPrenom" class="border rounded-md px-2 py-1" />
+            <button @click="saveEdit('prenom')" class="ml-2 text-green-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </button>
+            <button @click="cancelEdit('prenom')" class="ml-2 text-red-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </template>
+        </div>
+      </div>
 
+      <!-- Display Username -->
+      <div class="flex items-center mb-2">
+        <div class="w-1/3 font-medium">Username:</div>
+        <div class="w-2/3">
+          <template v-if="!isEditingUsername">
+            {{ adminProfile.username }}
+            <button @click="toggleEdit('username')" class="ml-2 text-blue-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15.293 5.293a1 1 0 011.414 0l2 2a1 1 0 010 1.414L8.414 19H6v-2.414l10.293-10.293zM19 6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2v-8h2a2 2 0 002-2v-2z"
+                />
+              </svg>
+            </button>
+          </template>
+          <template v-else>
+            <input v-model="tempUsername" class="border rounded-md px-2 py-1" />
+            <button @click="saveEdit('username')" class="ml-2 text-green-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </button>
+            <button @click="cancelEdit('username')" class="ml-2 text-red-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- Display Password (Hidden) -->
+      <div class="flex items-center mb-2">
+        <div class="w-1/3 font-medium">Password:</div>
+        <div class="w-2/3">
+          <template v-if="!isEditingPassword">
+            ********
+            <button @click="toggleEdit('password')" class="ml-2 text-blue-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15.293 5.293a1 1 0 011.414 0l2 2a1 1 0 010 1.414L8.414 19H6v-2.414l10.293-10.293zM19 6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2v-8h2a2 2 0 002-2v-2z"
+                />
+              </svg>
+            </button>
+          </template>
+          <template v-else>
+            <input
+              v-model="tempPassword"
+              type="password"
+              class="border rounded-md px-2 py-1"
+            />
+            <button @click="saveEdit('password')" class="ml-2 text-green-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </button>
+            <button @click="cancelEdit('password')" class="ml-2 text-red-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <button
+          @click="submitChanges"
+          class="px-4 py-2 bg-green-500 text-white rounded-md"
+        >
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
+
+<script>
+import axiosClient from "@/axios";
+import { mapGetters } from "vuex";
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
+
+const $toast = useToast();
+
+export default {
+  data() {
+    return {
+      adminProfile: {
+        nom: "",
+        prenom: "",
+        username: "",
+        password: "",
+      },
+      tempName: "",
+      tempPrenom: "",
+      tempUsername: "",
+      tempPassword: "",
+      isEditingName: false,
+      isEditingPrenom: false,
+      isEditingUsername: false,
+      isEditingPassword: false,
+    };
+  },
+  computed: {
+    ...mapGetters(["profileId"]),
+  },
+  methods: {
+    toggleEdit(field) {
+      switch (field) {
+        case "name":
+          this.isEditingName = !this.isEditingName;
+          break;
+        case "prenom":
+          this.isEditingPrenom = !this.isEditingPrenom;
+          break;
+        case "username":
+          this.isEditingUsername = !this.isEditingUsername;
+          break;
+        case "password":
+          this.isEditingPassword = !this.isEditingPassword;
+          break;
+        default:
+          break;
+      }
+    },
+    async fetchData() {
+      try {
+        const response = await axiosClient.get(`/comptable/profiles`);
+
+        this.adminProfile = response.data;
+        this.adminProfile.username = response.data.user.name;
+
+        // Initialize temp values for editing
+        this.tempName = this.adminProfile.nom;
+        this.tempPrenom = this.adminProfile.prenom;
+        this.tempUsername = this.adminProfile.username;
+        this.tempPassword = this.adminProfile.password;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+    saveEdit(field) {
+      switch (field) {
+        case "name":
+          this.adminProfile.nom = this.tempName;
+          this.toggleEdit("name");
+          break;
+        case "prenom":
+          this.adminProfile.prenom = this.tempPrenom;
+          this.toggleEdit("prenom");
+          break;
+        case "username":
+          this.adminProfile.username = this.tempUsername;
+          this.toggleEdit("username");
+          break;
+        case "password":
+          this.adminProfile.password = this.tempPassword;
+          this.toggleEdit("password");
+          break;
+        default:
+          break;
+      }
+    },
+    cancelEdit(field) {
+      switch (field) {
+        case "name":
+          this.tempName = this.adminProfile.nom;
+          this.toggleEdit("name");
+          break;
+        case "prenom":
+          this.tempPrenom = this.adminProfile.prenom;
+          this.toggleEdit("prenom");
+          break;
+        case "username":
+          this.tempUsername = this.adminProfile.username;
+          this.toggleEdit("username");
+          break;
+        case "password":
+          this.tempPassword = this.adminProfile.password;
+          this.toggleEdit("password");
+          break;
+        default:
+          break;
+      }
+    },
+    async submitChanges() {
+      try {
+        const response = await axiosClient.put(
+          `/comptable/profiles/${this.adminProfile.id}`,
+          this.adminProfile
+        );
+
+        $toast.success("Profile updated successfully", {
+          position: "bottom-right",
+          duration: 3000,
+        });
+      } catch (error) {
+        // console.error('Error updating data:', error);
+        $toast.error("Profile updated failed", {
+          position: "bottom-right",
+          duration: 3000,
+        });
+      }
+    },
+  },
+  mounted() {
+    this.fetchData();
+  },
+};
+</script>
 
 <style scoped></style>
