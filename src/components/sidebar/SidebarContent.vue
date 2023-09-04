@@ -175,8 +175,8 @@ const isCurrentPath = (path) => {
       />
 
       <SidebarLink
-        :to="{ name: 'AdministratifProfile' }"
-        :active="isCurrentRoute('AdministratifProfile')"
+        :to="{ name: 'ListClasses' }"
+        :active="isCurrentRoute('ListClasses')"
         icon="ri:bus-line"
         title="Gestion du transport"
       />
@@ -190,7 +190,7 @@ const isCurrentPath = (path) => {
       />
 
       <SidebarLink
-        :to="{ name: 'AdministratifProfile' }"
+        :to="{ name: 'AdministratifProfile'}"
         :active="isCurrentRoute('AdministratifProfile')"
         icon="mdi:shield-star-outline"
         title="Profile"

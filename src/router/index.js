@@ -173,7 +173,7 @@ const routes = [
       {
         path: "inscriptions/creer-eleve",
         component: () =>
-          import('@/views/Administratif/Inscriptions/CreateInscription.vue'),
+          import("@/views/Administratif/Inscriptions/CreateInscription.vue"),
         name: "EleveInscription",
       },
       {

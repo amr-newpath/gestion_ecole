@@ -214,7 +214,7 @@
             <div class="flex flex-wrap">
               <!-- Image Upload -->
               <div class="w-full lg:w-12/12 px-4">
-                <div class="relative w-full mb-3">
+                <div class="relative w-full mb-8">
                   <label
                     class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
                     for="image-upload"
@@ -229,22 +229,42 @@
                     @change="handleImageUpload"
                     style="display: none"
                   />
-                  <button
-                    type="button"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    @click="openImageUploader"
+                  <div
+                    class="relative border-dashed border-2 border-blueGray-300 rounded-lg p-8 text-center"
                   >
-                    Click to Upload
-                  </button>
+                    <div class="mb-4">
+                      <svg
+                        class="mx-auto h-12 w-12 text-blueGray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 4v16m8-8H4"></path>
+                      </svg>
+                    </div>
+                    <p class="text-blueGray-600">
+                      Drag and drop an image here or
+                      <span
+                        class="text-indigo-500 cursor-pointer"
+                        @click="openImageUploader"
+                      >
+                        click to upload
+                      </span>
+                    </p>
+                  </div>
                   <img
                     v-if="user.image"
                     :src="user.image"
                     alt="Uploaded Image"
-                    style="max-width: 30%"
+                    style="max-width: 30%; height: auto"
                     class="mt-4 mb-8 mx-auto"
                   />
                 </div>
               </div>
+
               <div class="w-full lg:w-6/12 px-4">
                 <div class="relative w-full mb-3">
                   <label
