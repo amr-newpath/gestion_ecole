@@ -91,6 +91,29 @@ const isCurrentPath = (path) => {
         />
       </SidebarCollapsible> -->
 
+      
+
+      <SidebarLink
+        :to="{ name: 'ListElevesAdmin' }"
+        :active="isCurrentRoute('ListElevesAdmin')"
+        icon="pajamas:account"
+        title="Gestion des eleves"
+      />
+
+      <SidebarLink
+        :to="{ name: 'ListTuteursAdmin' }"
+        :active="isCurrentRoute('ListTuteursAdmin')"
+        icon="icon-park-outline:family"
+        title="Gestion des tuteurs"
+      />
+
+      <!-- <SidebarLink
+        :to="{ name: 'ListTuteursAdmin' }"
+        :active="isCurrentRoute('ListTuteursAdmin')"
+        icon="fa-solid:chalkboard-teacher"
+        title="Gestion des profs"
+      /> -->
+
       <SidebarCollapsible
         icon="mdi:shield-star-outline"
         title="Gestion des Admins"
@@ -110,19 +133,24 @@ const isCurrentPath = (path) => {
         />
       </SidebarCollapsible>
 
-      <SidebarLink
-        :to="{ name: 'ListElevesAdmin' }"
-        :active="isCurrentRoute('ListElevesAdmin')"
-        icon="pajamas:account"
-        title="Gestion des eleves"
-      />
-
-      <SidebarLink
-        :to="{ name: 'ListTuteursAdmin' }"
-        :active="isCurrentRoute('ListTuteursAdmin')"
-        icon="icon-park-outline:family"
-        title="Gestion des tuteurs"
-      />
+      <SidebarCollapsible
+        icon="fa-solid:chalkboard-teacher"
+        title="Gestion des profs"
+        :active="isCurrentPath('/admin/profs') || isCurrentPath('/admin/create-prof')"
+      >
+        <SidebarCollapsibleItem
+          :to="{ name: 'HomeProfs' }"
+          title="List des profs"
+          icon="mdi:sh  ield-star-outline"
+          :active="isCurrentRoute('HomeProfs')"
+        />
+        <SidebarCollapsibleItem
+          :to="{ name: 'AccountProfs' }"
+          title="Créer un compte"
+          icon="mdi:sh  ield-star-outline"
+          :active="isCurrentRoute('AccountProfs')"
+        />
+      </SidebarCollapsible>
 
       <!-- <SidebarLink
       title="Gestion des Admins"

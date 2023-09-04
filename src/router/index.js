@@ -157,6 +157,21 @@ const routes = [
         component: () => import("@/views/Admin/GSTuteurs/ListTuteurs.vue"),
         name: "ListTuteursAdmin",
       },
+      {
+        path: "profs",
+        component: () => import("@/views/Admin/GSProfs/Home.vue"),
+        name: "HomeProfs",
+      },
+      {
+        path: "create-prof",
+        component: () => import("@/views/Admin/GSProfs/AccountProfs.vue"),
+        name: "AccountProfs",
+      },
+      {
+        path: "edit-user/:id",
+        name: "EditProf",
+        component: () => import("@/views/Admin/GSProfs/EditProf.vue"),
+      },
     ],
   },
   {
