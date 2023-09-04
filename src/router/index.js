@@ -152,6 +152,11 @@ const routes = [
         component: () => import("@/views/Admin/GSEleves/ListEleves.vue"),
         name: "ListElevesAdmin",
       },
+      {
+        path: "tuteurs",
+        component: () => import("@/views/Admin/GSTuteurs/ListTuteurs.vue"),
+        name: "ListTuteursAdmin",
+      },
     ],
   },
   {

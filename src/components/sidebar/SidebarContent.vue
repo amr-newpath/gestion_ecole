@@ -117,6 +117,13 @@ const isCurrentPath = (path) => {
         title="Gestion des eleves"
       />
 
+      <SidebarLink
+        :to="{ name: 'ListTuteursAdmin' }"
+        :active="isCurrentRoute('ListTuteursAdmin')"
+        icon="icon-park-outline:family"
+        title="Gestion des tuteurs"
+      />
+
       <!-- <SidebarLink
       title="Gestion des Admins"
       :to="{ name: 'Dashboard' }"
