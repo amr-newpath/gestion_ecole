@@ -147,6 +147,11 @@ const routes = [
         name: "EditUser",
         component: () => import("@/views/Admin/GSAdmins/EditUser.vue"),
       },
+      {
+        path: "eleves",
+        component: () => import("@/views/Admin/GSEleves/ListEleves.vue"),
+        name: "ListElevesAdmin",
+      },
     ],
   },
   {

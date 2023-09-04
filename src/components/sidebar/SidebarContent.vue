@@ -49,13 +49,6 @@ const isCurrentPath = (path) => {
         :active="isCurrentRoute('AdminDashboard')"
         icon="mdi:view-dashboard"
       />
-      <SidebarLink
-        :to="{ name: 'AdminProfile' }"
-        :active="isCurrentRoute('AdminProfile')"
-        icon="mdi:shield-star-outline"
-        title="Admin Profile"
-      >
-      </SidebarLink>
 
       <!--!! Gestion des eleves -->
 
@@ -101,21 +94,28 @@ const isCurrentPath = (path) => {
       <SidebarCollapsible
         icon="mdi:shield-star-outline"
         title="Gestion des Admins"
-        :active="isCurrentPath('/index')"
+        :active="isCurrentPath('/admin/gadmins') || isCurrentPath('/admin/create-compte')"
       >
         <SidebarCollapsibleItem
           :to="{ name: 'HomeAdmins' }"
-          title="Home"
+          title="List des admins"
           icon="mdi:sh  ield-star-outline"
           :active="isCurrentRoute('HomeAdmins')"
         />
         <SidebarCollapsibleItem
           :to="{ name: 'AccountAdmins' }"
-          title="Comptes"
+          title="Créer un compte"
           icon="mdi:sh  ield-star-outline"
           :active="isCurrentRoute('AccountAdmins')"
         />
       </SidebarCollapsible>
+
+      <SidebarLink
+        :to="{ name: 'ListElevesAdmin' }"
+        :active="isCurrentRoute('ListElevesAdmin')"
+        icon="pajamas:account"
+        title="Gestion des eleves"
+      />
 
       <!-- <SidebarLink
       title="Gestion des Admins"
@@ -192,7 +192,7 @@ const isCurrentPath = (path) => {
       <SidebarLink
         :to="{ name: 'AdministratifProfile'}"
         :active="isCurrentRoute('AdministratifProfile')"
-        icon="mdi:shield-star-outline"
+        icon="gg:profile"
         title="Profile"
       >
       </SidebarLink>
@@ -252,7 +252,7 @@ const isCurrentPath = (path) => {
       <SidebarLink
         :to="{ name: 'ComptableProfile' }"
         :active="isCurrentRoute('ComptableProfile')"
-        icon="mdi:shield-star-outline"
+        icon="gg:profile"
         title="Profile"
       >
       </SidebarLink>

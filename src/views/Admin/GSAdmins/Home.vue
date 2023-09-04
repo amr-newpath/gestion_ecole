@@ -91,12 +91,7 @@
                   <th class="p-2 whitespace-nowrap">
                     <div class="font-semibold text-left">Code</div>
                   </th>
-                  <th class="p-2 whitespace-nowrap">
-                    <div class="font-semibold text-left">Email</div>
-                  </th>
-                  <th class="p-2 whitespace-nowrap">
-                    <div class="font-semibold text-left">Tele</div>
-                  </th>
+
                   <th class="p-2 whitespace-nowrap">
                     <div class="font-semibold text-center">Actions</div>
                   </th>
@@ -106,7 +101,7 @@
                 <tr v-for="(user, index) in paginatedList" :key="index">
                   <td class="p-2 whitespace-nowrap">
                     <div class="flex items-center">
-                      <div class="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
+                      <!-- <div class="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
                         <img
                           class="rounded-full"
                           :src="user.image"
@@ -114,7 +109,7 @@
                           height="40"
                           :alt="user.name"
                         />
-                      </div>
+                      </div> -->
                       <div class="font-medium text-gray-800">
                         {{ user.name }}
                       </div>
@@ -125,12 +120,6 @@
                   </td>
                   <td class="p-2 whitespace-nowrap">
                     <div class="text-left">{{ user.code }}</div>
-                  </td>
-                  <td class="p-2 whitespace-nowrap">
-                    <div class="text-left">{{ user.email }}</div>
-                  </td>
-                  <td class="p-2 whitespace-nowrap">
-                    <div class="text-left">{{ user.tele }}</div>
                   </td>
                   <td class="p-2 whitespace-nowrap">
                     <div class="flex justify-center space-x-2">
@@ -192,6 +181,12 @@
 
 <script>
 import axiosClient from "../../../axios";
+
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
+
+const $toast = useToast();
+
 export default {
   data() {
     return {
@@ -245,7 +240,7 @@ export default {
       const startIndex = (this.currentPage - 1) * this.itemsPerPage;
       return this.filteredList.slice(
         startIndex,
-        startIndex + this.itemsPerPage,
+        startIndex + this.itemsPerPage
       );
     },
   },
@@ -282,10 +277,19 @@ export default {
         axiosClient
           .delete(`/admin/delete-user/${userId}`)
           .then(() => {
+            $toast.success("User deleted successfully", {
+              position: "bottom-right",
+              duration: 3000,
+            });
+
             this.fetchUsers();
           })
           .catch((error) => {
             console.error("Error deleting user:", error);
+            $toast.error("User deleted failed", {
+              position: "bottom-right",
+              duration: 3000,
+            });
           });
       }
     },
