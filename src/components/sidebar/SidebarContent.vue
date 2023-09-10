@@ -105,6 +105,13 @@ const isCurrentPath = (path) => {
         title="Gestion des tuteurs"
       />
 
+      <SidebarLink
+        :to="{ name: 'ListMatieres' }"
+        :active="isCurrentRoute('ListMatieres')"
+        icon="icon-park-outline:family"
+        title="Gestion des matières"
+      />
+
       <!-- <SidebarLink
         :to="{ name: 'ListTuteursAdmin' }"
         :active="isCurrentRoute('ListTuteursAdmin')"
@@ -229,7 +236,7 @@ const isCurrentPath = (path) => {
       <SidebarLink
         :to="{ name: 'CreatePlanning' }"
         :active="isCurrentRoute('CreatePlanning')"
-        icon="pajamas:planning" 
+        icon="pajamas:planning"
         title="Gestion des plannings"
       />
 
@@ -326,7 +333,6 @@ const isCurrentPath = (path) => {
       />
     </template>
 
-
     <!-- ?? Sidebar for Prof -->
     <template v-if="userRole === 'Prof'">
       <SidebarLink
@@ -336,6 +342,5 @@ const isCurrentPath = (path) => {
         icon="mdi:view-dashboard"
       />
     </template>
-
   </PerfrectScrollbar>
 </template>

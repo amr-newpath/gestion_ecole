@@ -172,6 +172,11 @@ const routes = [
         name: "EditProf",
         component: () => import("@/views/Admin/GSProfs/EditProf.vue"),
       },
+      {
+        path: "matieres",
+        name: "ListMatieres",
+        component: () => import("@/views/Admin/Matieres/ListMatieres.vue"),
+      },
     ],
   },
   {
