@@ -224,10 +224,12 @@ const routes = [
           import("@/views/Administratif/Classes/TableClasses.vue"),
         name: "ListClasses",
       },
-      // {
-      //   path: "inscriptions/home",
-      //   // component: AdministratifReports,
-      // },
+      {
+        path: "plannings/",
+        component: () =>
+          import("@/views/Administratif/Plannings/CreatePlanning.vue"),
+        name: "CreatePlanning",
+      },
     ],
   },
   {
@@ -294,10 +296,11 @@ const routes = [
       },
     ],
   },
+
   {
     path: "/eleve",
-    component: EleveDashboard,
-    name: "EleveDashboard",
+    component: () => import("@/layouts/DashboardLayout.vue"),
+    // name: "EleveDashboard",
     meta: { requiresAuth: true, roles: ["Eleve"] },
     children: [
       // {
@@ -305,8 +308,9 @@ const routes = [
       //   // component: EleveCourses,
       // },
       {
-        path: "profile",
+        path: "/eleve",
         component: EleveProfile,
+        name: "EleveDashboard",
       },
     ],
   },

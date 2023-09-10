@@ -287,7 +287,7 @@ export default {
       }
     },
     createUser() {
-      this.$router.push({ name: "AccountAdmins" });
+      this.$router.push({ name: "AccountProfs" });
     },
     prevPage() {
       this.currentPage--;

@@ -28,7 +28,7 @@
                 class="px-2 py-1 border rounded-md focus:outline-none"
               >
                 <option value="">Niveau</option>
-                <option value="BAC">BAC1</option>
+                <option value="BAC1">BAC1</option>
                 <option value="BAC2">BAC2</option>
                 <option value="CA1">CP</option>
               </select>
@@ -64,7 +64,6 @@
                   <th class="p-4 whitespace-nowrap">
                     <div class="font-semibold text-left">Status</div>
                   </th>
-
                   <th class="p-4 whitespace-nowrap">
                     <div class="font-semibold text-left">Actions</div>
                   </th>

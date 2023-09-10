@@ -91,8 +91,6 @@ const isCurrentPath = (path) => {
         />
       </SidebarCollapsible> -->
 
-      
-
       <SidebarLink
         :to="{ name: 'ListElevesAdmin' }"
         :active="isCurrentRoute('ListElevesAdmin')"
@@ -117,7 +115,10 @@ const isCurrentPath = (path) => {
       <SidebarCollapsible
         icon="mdi:shield-star-outline"
         title="Gestion des Admins"
-        :active="isCurrentPath('/admin/gadmins') || isCurrentPath('/admin/create-compte')"
+        :active="
+          isCurrentPath('/admin/gadmins') ||
+          isCurrentPath('/admin/create-compte')
+        "
       >
         <SidebarCollapsibleItem
           :to="{ name: 'HomeAdmins' }"
@@ -136,7 +137,9 @@ const isCurrentPath = (path) => {
       <SidebarCollapsible
         icon="fa-solid:chalkboard-teacher"
         title="Gestion des profs"
-        :active="isCurrentPath('/admin/profs') || isCurrentPath('/admin/create-prof')"
+        :active="
+          isCurrentPath('/admin/profs') || isCurrentPath('/admin/create-prof')
+        "
       >
         <SidebarCollapsibleItem
           :to="{ name: 'HomeProfs' }"
@@ -175,7 +178,7 @@ const isCurrentPath = (path) => {
       <SidebarLink
         :to="{ name: 'EleveInscription' }"
         :active="isCurrentRoute('EleveInscription')"
-        icon="mdi:register-outline" 
+        icon="mdi:register-outline"
         title="Fiche d'inscription"
       >
       </SidebarLink>
@@ -216,7 +219,6 @@ const isCurrentPath = (path) => {
         title="Gestion du transport"
       />
 
-
       <SidebarLink
         :to="{ name: 'ListClasses' }"
         :active="isCurrentRoute('ListClasses')"
@@ -225,7 +227,14 @@ const isCurrentPath = (path) => {
       />
 
       <SidebarLink
-        :to="{ name: 'AdministratifProfile'}"
+        :to="{ name: 'CreatePlanning' }"
+        :active="isCurrentRoute('CreatePlanning')"
+        icon="pajamas:planning" 
+        title="Gestion des plannings"
+      />
+
+      <SidebarLink
+        :to="{ name: 'AdministratifProfile' }"
         :active="isCurrentRoute('AdministratifProfile')"
         icon="gg:profile"
         title="Profile"
@@ -267,14 +276,14 @@ const isCurrentPath = (path) => {
         title="Consultation rubrique"
         :to="{ name: 'RubriquePaiement' }"
         :active="isCurrentRoute('RubriquePaiement')"
-        icon="ic:outline-fact-check" 
+        icon="ic:outline-fact-check"
       />
 
       <SidebarLink
         title="Gestion des chèques"
         :to="{ name: 'ChequePaiement' }"
         :active="isCurrentRoute('ChequePaiement')"
-        icon="uiw:pay" 
+        icon="uiw:pay"
       />
 
       <SidebarLink
@@ -292,5 +301,41 @@ const isCurrentPath = (path) => {
       >
       </SidebarLink>
     </template>
+
+    <!-- ?? Sidebar for Eleve -->
+    <template v-if="userRole === 'Eleve'">
+      <SidebarLink
+        title="Dashboard"
+        :to="{ name: 'EleveDashboard' }"
+        :active="isCurrentRoute('EleveDashboard')"
+        icon="mdi:view-dashboard"
+      />
+
+      <SidebarLink
+        title="Consulte le plainnig"
+        :to="{ name: 'ComptableProfile' }"
+        :active="isCurrentRoute('ComptableProfile')"
+        icon="mdi:view-dashboard"
+      />
+
+      <SidebarLink
+        title="Consulte les activités"
+        :to="{ name: 'ComptableProfile' }"
+        :active="isCurrentRoute('ComptableProfile')"
+        icon="mdi:view-dashboard"
+      />
+    </template>
+
+
+    <!-- ?? Sidebar for Prof -->
+    <template v-if="userRole === 'Prof'">
+      <SidebarLink
+        title="Dashboard"
+        :to="{ name: 'EleveDashboard' }"
+        :active="isCurrentRoute('EleveDashboard')"
+        icon="mdi:view-dashboard"
+      />
+    </template>
+
   </PerfrectScrollbar>
 </template>
