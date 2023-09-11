@@ -13,6 +13,7 @@ import DirecteurDashboard from "../views/Directeur/Dashboard.vue";
 import Unauthorized from "../views/Unauthorized.vue";
 import NotFound from "../views/NotFound.vue";
 import EleveProfile from "../views/Eleve/Profile.vue";
+import ProfProfile from "../views/Prof/Profile.vue";
 import ParentProfile from "../views/Parent/Profile.vue";
 import AdminProfile from "../views/Admin/Profile.vue";
 
@@ -303,6 +304,27 @@ const routes = [
   },
 
   {
+    path: "/prof",
+    component: () => import("@/layouts/DashboardLayout.vue"),
+    // name: "ProfDashboard",
+    meta: { requiresAuth: true, roles: ["Prof"] },
+    children: [
+      {
+        path: "plannings",
+        component: () =>
+          import("@/views/Prof/Plannings.vue"),
+        name: "ProfPlanning",
+      },
+      {
+        path: "profile",
+        component: ProfProfile,
+        name: "ProfProfile",
+      },
+
+    ],
+  },
+
+  {
     path: "/eleve",
     component: () => import("@/layouts/DashboardLayout.vue"),
     // name: "EleveDashboard",
@@ -313,9 +335,15 @@ const routes = [
       //   // component: EleveCourses,
       // },
       {
+        path: "planning",
+        component: () =>
+          import("@/views/Eleve/Planning.vue"),
+        name: "ElevePlanning",
+      },
+      {
         path: "/eleve",
         component: EleveProfile,
-        name: "EleveDashboard",
+        name: "EleveProfile",
       },
     ],
   },
@@ -335,22 +363,7 @@ const routes = [
       },
     ],
   },
-  {
-    path: "/prof",
-    component: ProfDashboard,
-    name: "ProfDashboard",
-    meta: { requiresAuth: true, roles: ["Prof"] },
-    children: [
-      {
-        path: "",
-        // component: ProfSchedule,
-      },
-      {
-        path: "courses",
-        // component: ProfCourses,
-      },
-    ],
-  },
+  
 ];
 
 const router = createRouter({

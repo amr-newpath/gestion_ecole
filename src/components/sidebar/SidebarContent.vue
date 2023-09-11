@@ -320,16 +320,16 @@ const isCurrentPath = (path) => {
 
       <SidebarLink
         title="Consulte le plainnig"
-        :to="{ name: 'ComptableProfile' }"
-        :active="isCurrentRoute('ComptableProfile')"
-        icon="mdi:view-dashboard"
+        :to="{ name: 'ElevePlanning' }"
+        :active="isCurrentRoute('ElevePlanning')"
+        icon="pajamas:planning"
       />
 
       <SidebarLink
         title="Consulte les activités"
         :to="{ name: 'ComptableProfile' }"
         :active="isCurrentRoute('ComptableProfile')"
-        icon="mdi:view-dashboard"
+        icon="fluent-mdl2:account-activity"
       />
     </template>
 
@@ -337,10 +337,25 @@ const isCurrentPath = (path) => {
     <template v-if="userRole === 'Prof'">
       <SidebarLink
         title="Dashboard"
-        :to="{ name: 'EleveDashboard' }"
-        :active="isCurrentRoute('EleveDashboard')"
+        :to="{ name: 'ProfProfile' }"
+        :active="isCurrentRoute('ProfProfile')"
         icon="mdi:view-dashboard"
       />
+
+      <SidebarLink
+        title="Consulte les plainnigs"
+        :to="{ name: 'ProfPlanning' }"
+        :active="isCurrentRoute('ProfPlanning')"
+        icon="pajamas:planning"
+      />
+
+      <SidebarLink
+        :to="{ name: 'ProfProfile' }"
+        :active="isCurrentRoute('ProfProfile')"
+        icon="gg:profile"
+        title="Profile"
+      />
+      
     </template>
   </PerfrectScrollbar>
 </template>
