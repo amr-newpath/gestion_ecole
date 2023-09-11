@@ -2,38 +2,52 @@
   <div class="container mx-auto mt-8 p-4 bg-white rounded-lg shadow-lg">
     <h1 class="text-2xl font-semibold mb-4">Weekly Planner</h1>
     <div class="flex items-center justify-between mb-4">
-      <!-- <div class="flex space-x-4"> -->
-      <!-- <select
-          v-model=""
-          @change=""
+      <div class="flex space-x-4">
+        <!-- <select
+          v-model="selectedNiveau"
+          @change="filteredCourses"
           class="px-8 py-1 border rounded-md focus:outline-none"
         >
           <option value="">Niveau</option>
           <option value="BAC">BAC1</option>
           <option value="BAC2">BAC2</option>
           <option value="CA1">CP</option>
-        </select>
+        </select> -->
 
+        <label for="classe" class="flex items-center"> Classe</label>
         <select
-          v-model=""
-          @change=""
+          id="classe"
+          v-model="selectedClasse"
+          @change="filteredCourses"
           class="px-8 py-1 border rounded-md focus:outline-none"
         >
-          <option value="">Groupe</option>
+          <option
+            v-for="classe in classes"
+            :key="classe.id"
+            :value="classe.nom"
+          >
+            {{ classe.nom }}
+          </option>
         </select>
 
+        <label for="trimestre" class="flex items-center"> Trimestre</label>
+
         <select
-          v-model=""
-          @change=""
+          id="trimestre"
+          v-model="selectedTrimestre"
+          @change="filteredCourses"
           class="px-8 py-1 border rounded-md focus:outline-none"
         >
           <option value="">Trimestre</option>
+          <option value="Tr1">Tr1</option>
+          <option value="Tr2">Tr2</option>
+          <option value="Tr3">Tr3</option>
         </select>
-      </div> -->
+      </div>
 
       <button
         @click="openCreateModal"
-        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
       >
         Create New Course
       </button>
@@ -43,32 +57,153 @@
       <div
         v-for="day in days"
         :key="day"
-        class="flex-1 flex flex-col items-center"
+        class="flex-1 flex flex-col my-4 items-center"
       >
         <div class="p-2 border-b border-gray-300 day-box">{{ day }}</div>
-        <div class="flex flex-col">
+        <div v-if="selectedClasse" class="flex my-6 flex-col">
           <div
             v-for="course in coursesByDay(day)"
             :key="course.id"
             :style="{ backgroundColor: course.color }"
-            class="text-white rounded-lg p-2 mt-2"
+            class="text-white rounded-lg p-2 mt-2 course-box"
+            @click="openCourseModal(course)"
           >
             <div class="flex flex-wrap justify-between">
-              <div class="w-full sm:w-auto sm:flex-1">
-                <p class="font-bold text-lg">{{ course.matiere.name }}</p>
-                <p><strong>Description:</strong> {{ course.description }}</p>
+              <div class="w-full my-2 sm:w-auto sm:flex-1">
+                <p class="font-bold text-lg text-center">
+                  {{ course.matiere.name }}
+                </p>
+                <p class="text-center">({{ course.type }})</p>
               </div>
-              <div class="w-full sm:w-auto">
-                <p><strong>Type:</strong> {{ course.type }}</p>
-                <p><strong>Prof:</strong> Mr. {{ course.prof.nom }}</p>
-                <p><strong>Day:</strong> {{ course.day }}</p>
+              <div class="w-full sm:w-auto text">
+                <p class="">💡 {{ course.description }}</p>
+                <p>👨‍🏫 <strong>Prof:</strong> Mr. {{ course.prof.nom }}</p>
+                <p>📅 <strong>Day:</strong> {{ course.day }}</p>
                 <p>
+                  ⌛
                   <i> {{ course.start_time }} - {{ course.end_time }}</i>
                 </p>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Course Information Modal Form -->
+    <div
+      v-if="isCourseModalOpen"
+      class="fixed inset-0 mt-16 flex items-center justify-center bg-black bg-opacity-50"
+    >
+      <div class="bg-white p-5 rounded-md shadow-lg max-w-md">
+        <h3 class="text-lg font-semibold mb-4">Course Information</h3>
+        <form @submit.prevent="updateCourse">
+          <div class="flex flex-wrap -mx-3">
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <label class="block text-sm font-medium">Matiere</label>
+              <select
+                v-model="selectedCourse.matiere.id"
+                class="my-3 px-10 py-2 border rounded-md"
+              >
+                <option
+                  v-for="matiere in matieres"
+                  :key="matiere.id"
+                  :value="matiere.id"
+                >
+                  {{ matiere.name }}
+                </option>
+              </select>
+            </div>
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <label class="block text-sm font-medium">Prof</label>
+              <select
+                v-model="selectedCourse.prof.id"
+                class="my-3 px-14 py-2 border rounded-md"
+              >
+                <option v-for="prof in profs" :key="prof.id" :value="prof.id">
+                  {{ prof.nom }} {{ prof.prenom }}
+                </option>
+              </select>
+            </div>
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <label class="block text-sm font-medium">Type</label>
+              <select
+                v-model="selectedCourse.type"
+                class="w-full my-3 px-3 py-2 border rounded-md"
+              >
+                <option value="Cours">Cours</option>
+                <option value="Exercices">Exercices</option>
+                <option value="TP">TP</option>
+              </select>
+            </div>
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <label class="block text-sm font-medium">Description</label>
+              <input
+                v-model="selectedCourse.description"
+                class="my-3 px-3 py-2 border rounded-md"
+              />
+            </div>
+
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <label class="block text-sm font-medium">Day</label>
+              <select
+                v-model="selectedCourse.day"
+                class="w-full my-3 px-3 py-2 border rounded-md"
+              >
+                <option value="Lundi">Lundi</option>
+                <option value="Mardi">Mardi</option>
+                <option value="Mercredi">Mercredi</option>
+                <option value="Jeudi">Jeudi</option>
+                <option value="Vendredi">Vendredi</option>
+                <option value="Samedi">Samedi</option>
+              </select>
+            </div>
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <label class="block text-sm font-medium">Trimestre</label>
+              <select
+                v-model="selectedCourse.trimestre"
+                class="w-full my-3 px-3 py-2 border rounded-md"
+              >
+                <option value="Tr1">Tr1</option>
+                <option value="Tr2">Tr2</option>
+                <option value="Tr3">Tr3</option>
+              </select>
+            </div>
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <label class="block text-sm font-medium">Start Time</label>
+              <input
+                v-model="selectedCourse.start_time"
+                type="time"
+                class="my-3 px-3 py-2 border rounded-md"
+              />
+            </div>
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <label class="block text-sm font-medium">End Time</label>
+              <input
+                v-model="selectedCourse.end_time"
+                type="time"
+                class="my-3 px-3 py-2 border rounded-md"
+              />
+            </div>
+          </div>
+          <div class="flex justify-between mt-6">
+            <button @click="closeCourseModal" class="px-4 py-2 text-gray-500">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-1 bg-blue-500 text-white rounded-md"
+            >
+              Update
+            </button>
+            <button
+              @click="deleteCourse"
+              class="px-4 py-1 bg-red-500 text-white rounded-md"
+            >
+              Delete Course
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -207,9 +342,17 @@
 <script>
 import axiosClient from "@/axios";
 
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
+
+const $toast = useToast();
+
 export default {
   data() {
     return {
+      selectedNiveau: "",
+      selectedClasse: "",
+      selectedTrimestre: "",
       days: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
       // color: "",
       courses: [],
@@ -247,9 +390,70 @@ export default {
         "#3B3B98",
       ],
       isCreateModalOpen: false,
+      isCourseModalOpen: false,
+      selectedCourse: null,
     };
   },
   methods: {
+    openCourseModal(course) {
+      this.selectedCourse = { ...course }; // Make a copy of the course object
+      this.isCourseModalOpen = true;
+    },
+    closeCourseModal() {
+      this.selectedCourse = null;
+      this.isCourseModalOpen = false;
+    },
+    async updateCourse() {
+      try {
+        const requestData = {
+          matiere_id: this.selectedCourse.matiere.id,
+          description: this.selectedCourse.description,
+          type: this.selectedCourse.type,
+          day: this.selectedCourse.day,
+          start_time: this.selectedCourse.start_time,
+          end_time: this.selectedCourse.end_time,
+          trimestre: this.selectedCourse.trimestre,
+          prof_id: this.selectedCourse.prof.id,
+          // classe_id: this.selectedCourse.classe.id,
+        };
+
+        const response = await axiosClient.put(
+          `/administratif/plannings/${this.selectedCourse.id}`,
+          requestData
+        );
+
+        $toast.success("Planning updated successfully!", {
+          position: "bottom-right",
+          duration: 3000,
+        });
+        // console.log("Course updated:", response.data);
+
+        this.closeCourseModal();
+      } catch (error) {
+        console.error("Error updating course:", error);
+      }
+    },
+
+    async deleteCourse() {
+      try {
+        const response = await axiosClient.delete(
+          `/administratif/plannings/${this.selectedCourse.id}`
+        );
+
+        // console.log("Course deleted:", response.data);
+        $toast.success("Planning deleted successfully!", {
+          position: "bottom-right",
+          duration: 3000,
+        });
+
+        this.closeCourseModal();
+
+        this.fetchCourses();
+      } catch (error) {
+        console.error("Error deleting course:", error);
+      }
+    },
+
     async fetchCourses() {
       try {
         const response = await axiosClient.get("/administratif/plannings");
@@ -276,6 +480,7 @@ export default {
         .get("/administratif/profs")
         .then((response) => {
           this.profs = response.data;
+          this.newCourse.prof = this.profs[0].id;
         })
         .catch((error) => {
           console.error("Error fetching professors:", error);
@@ -286,6 +491,9 @@ export default {
         .get("/classes")
         .then((response) => {
           this.classes = response.data;
+          this.selectedClasse = this.classes[0].nom;
+          this.newCourse.classe = this.classes[0].id;
+          this.selectedTrimestre = "Tr1";
         })
         .catch((error) => {
           console.error("Error fetching classes:", error);
@@ -321,7 +529,12 @@ export default {
         .post("/administratif/create-planning", requestData)
         .then((response) => {
           // Handle the successful response, e.g., show a success message or redirect
-          console.log("New planning entry created:", response.data);
+          // console.log("New planning entry created:", response.data);
+
+          $toast.success("Planning created successfully!", {
+            position: "bottom-right",
+            duration: 3000,
+          });
 
           // Clear the form and close the modal
           this.fetchCourses();
@@ -343,22 +556,6 @@ export default {
           console.error("Error creating planning entry:", error);
         });
     },
-
-    // submitNewCourse() {
-    //   const randomIndex = Math.floor(Math.random() * this.colors.length);
-    //   const randomColor = this.colors[randomIndex];
-    //   this.courses.push({ ...this.newCourse, color: randomColor });
-    //   this.newCourse = {
-    //     title: "",
-    //     description: "",
-    //     type: "Cours",
-    //     day: "Lundi",
-    //     trimestre: "Tr1",
-    //     startTime: "",
-    //     endTime: "",
-    //   };
-    //   this.isCreateModalOpen = false;
-    // },
   },
   created() {
     this.fetchCourses();
@@ -367,9 +564,28 @@ export default {
     this.fetchClasses();
   },
   computed: {
+    filteredCourses() {
+      // Filter the courses array based on selected filters
+      return this.courses.filter((course) => {
+        // const niveauMatch =
+        //   !this.selectedNiveau || course.niveau === this.selectedNiveau;
+
+        console.log(this.selectedClasse);
+
+        const classeMatch =
+          !this.selectedClasse || course.classe.nom === this.selectedClasse;
+
+        const trimestreMatch =
+          !this.selectedTrimestre ||
+          course.trimestre.toLowerCase() ===
+            this.selectedTrimestre.toLowerCase();
+
+        return classeMatch && trimestreMatch;
+      });
+    },
     coursesByDay() {
       return (day) => {
-        return this.courses.filter((course) => course.day === day);
+        return this.filteredCourses.filter((course) => course.day === day);
       };
     },
   },
@@ -377,6 +593,12 @@ export default {
 </script>
 
 <style scoped>
+
+.course-box:hover {
+  transform: scale(1.04); 
+  transition: transform 0.3s ease; 
+  cursor: pointer;
+}
 .day-box:hover {
   background-color: #f0f0f0;
   transition: background-color 0.3s ease-in-out;
