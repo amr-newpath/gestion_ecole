@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto mt-8 p-4 bg-white rounded-lg shadow-lg">
+  <div class="container mx-auto mt-4 p-4 bg-white rounded-lg shadow-lg container-parent">
     <h1 class="text-2xl font-semibold mb-4">Weekly Planner</h1>
     <div class="flex items-center justify-between mb-4">
       <div class="flex space-x-4">
@@ -38,7 +38,7 @@
           @change="filteredCourses"
           class="px-8 py-1 border rounded-md focus:outline-none"
         >
-          <option value="">Trimestre</option>
+          <!-- <option value="">Trimestre</option> -->
           <option value="Tr1">Tr1</option>
           <option value="Tr2">Tr2</option>
           <option value="Tr3">Tr3</option>
@@ -47,42 +47,45 @@
 
       <button
         @click="openCreateModal"
-        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+        class="bg-blue-500 text-white px-4 py-2 mr-8 rounded-md hover:bg-blue-600"
       >
         Create New Course
       </button>
     </div>
 
-    <div class="flex mt-4">
-      <div
-        v-for="day in days"
-        :key="day"
-        class="flex-1 flex flex-col my-4 items-center"
-      >
-        <div class="p-2 border-b border-gray-300 day-box">{{ day }}</div>
-        <div v-if="selectedClasse" class="flex my-6 flex-col">
-          <div
-            v-for="course in coursesByDay(day)"
-            :key="course.id"
-            :style="{ backgroundColor: course.color }"
-            class="text-white rounded-lg p-2 mt-2 course-box"
-            @click="openCourseModal(course)"
-          >
-            <div class="flex flex-wrap justify-between">
-              <div class="w-full my-2 sm:w-auto sm:flex-1">
-                <p class="font-bold text-lg text-center">
-                  {{ course.matiere.name }}
-                </p>
-                <p class="text-center">({{ course.type }})</p>
-              </div>
-              <div class="w-full sm:w-auto text">
-                <p class="">💡 {{ course.description }}</p>
-                <p>👨‍🏫 <strong>Prof:</strong> Mr. {{ course.prof.nom }}</p>
-                <p>📅 <strong>Day:</strong> {{ course.day }}</p>
-                <p>
-                  ⌛
-                  <i> {{ course.start_time }} - {{ course.end_time }}</i>
-                </p>
+    <div class="course-container">
+      <div class="flex mt-4">
+        <div
+          v-for="day in days"
+          :key="day"
+          class="flex-1 flex flex-col my-4 items-center"
+        >
+          <div class="p-2 border-b border-gray-300 day-box">{{ day }}</div>
+  
+          <div v-if="selectedClasse" class="flex my-6 flex-col">
+            <div
+              v-for="course in coursesByDay(day)"
+              :key="course.id"
+              :style="{ backgroundColor: course.color }"
+              class="text-white rounded-lg p-2 mt-2 course-box"
+              @click="openCourseModal(course)"
+            >
+              <div class="flex flex-wrap justify-between">
+                <div class="w-full my-2 sm:w-auto sm:flex-1">
+                  <p class="font-bold text-lg text-center">
+                    {{ course.matiere.name }}
+                  </p>
+                  <p class="text-center">({{ course.type }})</p>
+                </div>
+                <div class="w-full sm:w-auto text">
+                  <p class="">💡 {{ course.description }}</p>
+                  <p>👨‍🏫 <strong>Prof:</strong> Mr. {{ course.prof.nom }}</p>
+                  <p>📅 <strong>Day:</strong> {{ course.day }}</p>
+                  <p>
+                    ⌛
+                    <i> {{ course.start_time }} - {{ course.end_time }}</i>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -604,6 +607,14 @@ export default {
 </script>
 
 <style scoped>
+
+.container-parent {
+  margin-left: 12px;
+}
+.course-container {
+  max-height: 600px; /* Adjust this value as needed */
+  overflow-y: auto;
+}
 .course-box:hover {
   transform: scale(1.04);
   transition: transform 0.3s ease;
