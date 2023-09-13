@@ -349,6 +349,20 @@ const isCurrentPath = (path) => {
         icon="pajamas:planning"
       />
 
+       <SidebarLink
+        :to="{ name: 'ListSeances' }"
+        :active="isCurrentRoute('ListSeances')"
+        icon="fluent-mdl2:publish-course"
+        title="Gestion des seances"
+      />
+
+      <!-- <SidebarLink
+        :to="{ name: 'ProfProfile' }"
+        :active="isCurrentRoute('ProfProfile')"
+        icon="gg:profile"
+        title="Gestion des presences"
+      /> -->
+      
       <SidebarLink
         :to="{ name: 'ProfProfile' }"
         :active="isCurrentRoute('ProfProfile')"

@@ -123,6 +123,16 @@ export default {
       try {
         const response = await axiosClient.get("/prof/plannings");
         const fetchedCourses = response.data;
+
+        fetchedCourses.sort((a, b) => {
+          const startTimeA = a.start_time;
+          const startTimeB = b.start_time;
+
+          const dateA = new Date(`1970-01-01T${startTimeA}`);
+          const dateB = new Date(`1970-01-01T${startTimeB}`);
+          return dateA - dateB;
+        });
+
         this.courses = fetchedCourses;
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -133,9 +143,6 @@ export default {
         const response = await axiosClient.get("/prof/matieres");
         this.matieres = response.data;
 
-        // if (this.matieres.length > 0) {
-        //   this.newCourse.matiere = this.matieres[0].name;
-        // }
       } catch (error) {
         console.error("Error fetching Matieres:", error);
       }
@@ -191,8 +198,9 @@ export default {
 <style scoped>
 
 .course-box:hover {
-  transform: scale(1.04); 
+  transform: scale(1.03); 
   transition: transform 0.3s ease; 
+  cursor: pointer;
 }
 .day-box:hover {
   background-color: #f0f0f0;

@@ -16,6 +16,8 @@ import EleveProfile from "../views/Eleve/Profile.vue";
 import ProfProfile from "../views/Prof/Profile.vue";
 import ParentProfile from "../views/Parent/Profile.vue";
 import AdminProfile from "../views/Admin/Profile.vue";
+import SeanceDetails from "../views/Prof/GSSeances/SeanceDetails.vue"; // Create this view
+
 
 import store from "../store";
 
@@ -314,6 +316,18 @@ const routes = [
         component: () =>
           import("@/views/Prof/Plannings.vue"),
         name: "ProfPlanning",
+      },
+      {
+        path: "seances",
+        component: () =>
+          import("@/views/Prof/GSSeances/ListSeances.vue"),
+        name: "ListSeances",
+      },
+      {
+        path: "/seances/:id",
+        component: SeanceDetails,
+        name: "seance-details",
+        
       },
       {
         path: "profile",
