@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-96 my-10 w-2/3">
+  <div class="mx-96 my-10 w-full">
     <!-- Display detailed seance information here -->
     <div class="seance-container">
       <div
@@ -69,16 +69,15 @@
                 type="checkbox"
                 v-model="selectedStudents"
                 :value="student.id"
-                :disabled="student.id"
               />
               <label>{{ student.nom_complet }}</label>
-              <!-- <input
+              <input
                 v-if="selectedStudents.includes(student.id)"
                 class="mx-2 border rounded-md"
                 type="text"
-                v-model="student.comments"
+                v-model="comments[student.id]"
                 placeholder="Comment"
-              /> -->
+              />
             </div>
           </div>
           <button
@@ -113,6 +112,7 @@ export default {
       selectedSeance: null,
       showStudentList: false,
       students: [],
+      comments: {},
       selectedStudents: [],
     };
   },
@@ -132,9 +132,7 @@ export default {
   },
   methods: {
     toggleStudentList() {
-      // Toggle the student list visibility
       this.showStudentList = !this.showStudentList;
-      // Fetch the list of students when showing the list
       if (this.showStudentList) {
         axiosClient
           .get(`/prof/classes/${this.selectedSeance.classe.id}/students`)
@@ -155,12 +153,13 @@ export default {
       const requestData = {
         seance_id: this.selectedSeance.id,
         student_ids: this.selectedStudents,
+        comments: this.comments, 
       };
 
       axiosClient
         .post("/prof/create-absence", requestData)
         .then((response) => {
-          $toast.success("Presece declared successfuly!", {
+          $toast.success("Presence declared successfully!", {
             position: "bottom-right",
             duration: 3000,
           });
@@ -169,25 +168,25 @@ export default {
           console.error("Error creating absence:", error);
         });
     },
+
     fetchAbsences() {
-      // Fetch absences for the selected seance
       if (this.selectedSeance) {
         const seanceId = this.selectedSeance.id;
         axiosClient
           .get(`/prof/seances/${seanceId}/absences`)
           .then((response) => {
-            // Extract the absent student IDs from the response
             const absentStudentIds = response.data.map(
-              (absence) => absence.eleve_id
+              (absence) => {
+                this.comments[absence.eleve_id] = absence.comment
+                return absence.eleve_id;
+              }
             );
 
-            // Update the selectedStudents array to mark absent students as checked
             this.selectedStudents = absentStudentIds;
 
-            // Update the students array with comments
             this.students.forEach((student) => {
               if (absentStudentIds.includes(student.id)) {
-                student.comments = ""; // Initialize comments for absent students
+                student.comments = ""; 
               }
             });
           })
@@ -206,7 +205,7 @@ export default {
   transition: all 0.5s;
 }
 
-.seance-widget-slide-enter, .seance-widget-slide-leave-to /* .seance-widget-slide-leave-active in <2.1.8 */ {
+.seance-widget-slide-enter, .seance-widget-slide-leave-to {
   transform: translateX(100%);
   opacity: 0;
 }
@@ -246,7 +245,6 @@ export default {
   font-size: 1rem;
 }
 
-/* Add your button styles here */
 .seance-actions {
   display: flex;
   gap: 10px;

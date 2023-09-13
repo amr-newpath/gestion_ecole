@@ -15,6 +15,11 @@ import Dropdown from "@/components/Dropdown.vue";
 import DropdownLink from "@/components/DropdownLink.vue";
 import userAvatar from "@/assets/images/avatar.jpg";
 
+const userName = sessionStorage.getItem('userName')
+const userRole = sessionStorage.getItem('userRole')
+
+
+
 const { isFullscreen, toggle: toggleFullScreen } = useFullscreen();
 
 onMounted(() => {
@@ -30,6 +35,9 @@ import { useRouter } from "vue-router";
 
 const store = useStore();
 const router = useRouter();
+
+
+// console.log(sessionStorage.getItem('userName'))
 
 function logout() {
   store.dispatch("logout").then(() => {
@@ -50,6 +58,10 @@ function logout() {
         },
       ]"
     >
+
+    <div class="flex items-center gap-2">
+        <p>📌 {{ userRole }} | <span class="font-semibold">{{ userName }}</span> </p>
+      </div>
       <div class="flex items-center gap-2">
         <Button
           icon-only

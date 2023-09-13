@@ -14,7 +14,6 @@
     <div class="flex mb-10 justify-center space-x-4">
       <select
         v-model="selectedClasse"
-        @change="filteredSeances"
         class="px-8 py-2 border rounded-md focus:outline-none"
       >
         <option value="">Filter by Classe</option>
@@ -102,7 +101,7 @@
               <option
                 v-for="matiere in matieres"
                 :key="matiere.id"
-                :value="matiere"
+                :value="matiere.id"
               >
                 {{ matiere.name }}
               </option>
@@ -122,7 +121,7 @@
               <option
                 v-for="classe in classes"
                 :key="classe.id"
-                :value="classe"
+                :value="classe.id"
               >
                 {{ classe.nom }}
               </option>
@@ -146,34 +145,38 @@
       </div>
     </div>
 
-    <transition-group name="fade" tag="div" class="flex justify-center">
+    <transition-group name="fade" tag="div" class="flex flex-col items-center justify-center">
       <div
         v-for="seance in filteredSeances"
         :key="seance.id"
         class="w-2/4 bg-gray-100 p-4 rounded-lg shadow-md mb-4 transition-transform transform hover-list"
         @click="showSeanceDetails(seance)"
       >
-        <div class="mb-4">
-          <p class="text-lg text-center font-semibold mb-4">
-            Objet: {{ seance.objet }}
-          </p>
-          <p><strong>Matiere:</strong> {{ seance.matiere.name }}</p>
-          <p><strong>Classe:</strong> {{ seance.classe.nom }}</p>
-          <p v-if="seance.justification">
-            <strong>Justification:</strong> {{ seance.justification }}
-          </p>
-          <p
-            :class="
-              seance.status === 'In progress'
-                ? 'bg-blue-200 text-blue-800 rounded-full w-44 mt-2 text-center'
-                : seance.status === 'Done'
-                ? 'bg-green-200 text-green-800 rounded-full w-44 mt-2 py-1 px-2  text-center'
-                : 'bg-yellow-200 text-yellow-800 rounded-full w-44 mt-2 py-1 px-1  text-center'
-            "
-          >
-            <strong>Status:</strong> {{ seance.status }}
-          </p>
-        </div>
+        <router-link
+          :to="{ name: 'seance-details', params: { id: seance.id } }"
+        >
+          <div class="mb-4 cursor-pointer">
+            <p class="text-lg text-center font-semibold mb-4">
+              Objet: {{ seance.objet }}
+            </p>
+            <p><strong>Matiere:</strong> {{ seance.matiere.name }}</p>
+            <p><strong>Classe:</strong> {{ seance.classe.nom }}</p>
+            <p v-if="seance.justification">
+              <strong>Justification:</strong> {{ seance.justification }}
+            </p>
+            <p
+              :class="
+                seance.status === 'In progress'
+                  ? 'bg-blue-200 text-blue-800 rounded-full w-44 mt-2 text-center'
+                  : seance.status === 'Done'
+                  ? 'bg-green-200 text-green-800 rounded-full w-44 mt-2 py-1 px-2  text-center'
+                  : 'bg-yellow-200 text-yellow-800 rounded-full w-44 mt-2 py-1 px-1  text-center'
+              "
+            >
+              <strong>Status:</strong> {{ seance.status }}
+            </p>
+          </div>
+        </router-link>
         <div class="flex mt-10 space-x-2">
           <!-- Display the "Delayed" button only if the status is "In progress" -->
           <button
@@ -183,7 +186,6 @@
           >
             Delayed
           </button>
-          <!-- Display the "Done" button only if the status is "In progress" -->
           <button
             v-if="seance.status === 'In progress'"
             @click="completeSeance(seance)"
@@ -191,15 +193,7 @@
           >
             Done
           </button>
-
-          <router-link
-          :to="{ name: 'seance-details', params: { id: seance.id } }"
-        >
-
-        <i class="fa fa-eye"></i>
-        </router-link>
         </div>
-        <!-- Display the justification input and button if the status is "In progress" -->
         <div
           v-if="
             seance.status === 'In progress' && seance.showJustificationInput
@@ -225,8 +219,6 @@
 <script>
 import axiosClient from "@/axios";
 
-// import SeanceDetails from "@/views/Prof/GSSeances/SeanceDetails.vue";
-
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
@@ -244,7 +236,7 @@ export default {
       selectedSeance: null,
       selectedClasse: "",
       selectedMatiere: "",
-      isCreateSeanceModalOpen: false, // Control the create seance modal
+      isCreateSeanceModalOpen: false,
       seances: [],
       matieres: [],
       classes: [],
@@ -271,15 +263,17 @@ export default {
 
       if (this.selectedClasse) {
         filteredSeances = filteredSeances.filter(
-          (seance) => seance.classe.nom === this.selectedClasse.nom
+          (seance) => seance.classe.id === this.selectedClasse
         );
+
+        console.log("filteredSeances, ", filteredSeances);
       }
 
-      console.log("filteredSeances,", filteredSeances);
+      // console.log("filteredSeances,", filteredSeances);
 
       if (this.selectedMatiere) {
         filteredSeances = filteredSeances.filter(
-          (seance) => seance.matiere.name === this.selectedMatiere.name
+          (seance) => seance.matiere.id === this.selectedMatiere
         );
       }
 
@@ -296,7 +290,9 @@ export default {
         .get("/prof/classes")
         .then((response) => {
           this.classes = response.data;
-          this.selectedClasse.nom = this.classes[0].nom;
+
+          this.selectedClasse = this.classes[0].id;
+          // console.log(this.selectedClasse.nom);
         })
         .catch((error) => {
           console.error("Error fetching classes:", error);
@@ -314,15 +310,14 @@ export default {
       try {
         const response = await axiosClient.get("/prof/seances");
         this.seances = response.data;
-        // console.log("Seances data:", this.seances); // Add this line
       } catch (error) {
         console.error("Error fetching seances:", error);
       }
     },
     openCreateSeanceModal() {
       this.isCreateSeanceModalOpen = true;
-      this.newSeance.classe_id = this.selectedClasse.id;
-      this.newSeance.matiere_id = this.selectedMatiere.id;
+      this.newSeance.classe_id = this.selectedClasse;
+      this.newSeance.matiere_id = this.selectedMatiere;
 
       console.log(
         "newSeance.contenu when modal opens:",
@@ -421,7 +416,7 @@ export default {
 
 <style>
 .hover-list:hover {
-  transform: scale(1.01); /* Adjust the scaling factor as needed */
-  transition: transform 0.2s ease; /* Adjust the transition duration as needed */
+  transform: scale(1.01);
+  transition: transform 0.2s ease;
 }
 </style>

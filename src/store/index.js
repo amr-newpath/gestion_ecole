@@ -71,6 +71,7 @@ const store = createStore({
       state.user.data = userData.user;
       sessionStorage.setItem("api_token", userData.token);
       sessionStorage.setItem("userRole", userData.user.roleable_type.split('\\')[2]);
+      sessionStorage.setItem("userName", userData.user.name);
     },
   },
   modules: {},
