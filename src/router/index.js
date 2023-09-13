@@ -330,6 +330,18 @@ const routes = [
         
       },
       {
+        path: "absences",
+        component: () =>
+          import("@/views/Prof/Absences.vue"),
+        name: "ListAbsences",
+      },
+      {
+        path: "matieres",
+        component: () =>
+          import("@/views/Prof/Matieres.vue"),
+        name: "ListMatieres",
+      },
+      {
         path: "profile",
         component: ProfProfile,
         name: "ProfProfile",

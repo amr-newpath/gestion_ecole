@@ -356,12 +356,19 @@ const isCurrentPath = (path) => {
         title="Gestion des seances"
       />
 
-      <!-- <SidebarLink
-        :to="{ name: 'ProfProfile' }"
-        :active="isCurrentRoute('ProfProfile')"
-        icon="gg:profile"
-        title="Gestion des presences"
-      /> -->
+      <SidebarLink
+        :to="{ name: 'ListAbsences' }"
+        :active="isCurrentRoute('ListAbsences')"
+        icon="ic:outline-present-to-all"
+        title="Consulter les absences"
+      />
+
+      <SidebarLink
+        :to="{ name: 'ListMatieres' }"
+        :active="isCurrentRoute('ListMatieres')"
+        icon="tdesign:course"
+        title="Consulter les matières"
+      />
       
       <SidebarLink
         :to="{ name: 'ProfProfile' }"
