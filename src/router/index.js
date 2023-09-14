@@ -357,10 +357,6 @@ const routes = [
     // name: "EleveDashboard",
     meta: { requiresAuth: true, roles: ["Eleve"] },
     children: [
-      // {
-      //   path: '',
-      //   // component: EleveCourses,
-      // },
       {
         path: "planning",
         component: () =>
@@ -368,7 +364,19 @@ const routes = [
         name: "ElevePlanning",
       },
       {
-        path: "/eleve",
+        path: "seances",
+        component: () =>
+          import("@/views/Eleve/Seances.vue"),
+        name: "EleveSeances",
+      },
+      {
+        path: "/seances/:id",
+        component: import("@/views/Eleve/SeanceDetails.vue"),
+        name: "seance-details",
+        
+      },
+      {
+        path: "profile",
         component: EleveProfile,
         name: "EleveProfile",
       },

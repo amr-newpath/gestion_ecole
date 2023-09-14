@@ -13,7 +13,7 @@ import Button from "@/components/Button.vue";
 import Logo from "@/components/Logo.vue";
 import Dropdown from "@/components/Dropdown.vue";
 import DropdownLink from "@/components/DropdownLink.vue";
-import userAvatar from "@/assets/images/avatar.jpg";
+import userAvatar from "@/assets/images/avatar.png";
 
 const userName = sessionStorage.getItem("userName");
 const userRole = sessionStorage.getItem("userRole");
@@ -34,11 +34,20 @@ import { useRouter } from "vue-router";
 const store = useStore();
 const router = useRouter();
 
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
+
+const $toast = useToast();
+
 // console.log(sessionStorage.getItem('userName'))
 
 function logout() {
   store.dispatch("logout").then(() => {
     router.push({ name: "Login" });
+    $toast.success("You are logging out successfully!", {
+          position: "bottom-right",
+          duration: 3000,
+        });
   });
 }
 </script>

@@ -356,7 +356,7 @@ export default {
       selectedGroupe: null, // Selected Groupe familiale object
       familles: [],
       paiements: [],
-      paymentMethods: ["Espèce", "Chèque", "TPE"],
+      paymentMethods: ["Espèce", "Chèque", "TPE", "Virement", "Versement"],
       selectedPaymentMethods: [],
       paymentMethodPrices: {
         Espèce: "",
@@ -792,7 +792,6 @@ export default {
           // this.$router.push({ name: 'CreatePaiement' });
           
 
-          // You might want to perform additional actions, show a success message, etc.
         } catch (error) {
           // console.error("Error creating payment:", error);
           $toast.error("An error occurred", {

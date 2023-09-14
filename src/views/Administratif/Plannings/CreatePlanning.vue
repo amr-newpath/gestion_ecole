@@ -1,18 +1,20 @@
 <template>
-  <div class="container mx-auto mt-4 p-4 bg-white rounded-lg shadow-lg container-parent">
+  <div
+    class="container mx-auto mt-4 p-4 bg-white rounded-lg shadow-lg container-parent"
+  >
     <h1 class="text-2xl font-semibold mb-4">Weekly Planner</h1>
     <div class="flex items-center justify-between mb-4">
       <div class="flex space-x-4">
-        <!-- <select
+        <select
           v-model="selectedNiveau"
           @change="filteredCourses"
           class="px-8 py-1 border rounded-md focus:outline-none"
         >
           <option value="">Niveau</option>
-          <option value="BAC">BAC1</option>
+          <option value="BAC1">BAC1</option>
           <option value="BAC2">BAC2</option>
           <option value="CA1">CP</option>
-        </select> -->
+        </select>
 
         <label for="classe" class="flex items-center"> Classe</label>
         <select
@@ -22,7 +24,7 @@
           class="px-8 py-1 border rounded-md focus:outline-none"
         >
           <option
-            v-for="classe in classes"
+            v-for="classe in filteredClasses"
             :key="classe.id"
             :value="classe.nom"
           >
@@ -61,7 +63,7 @@
           class="flex-1 flex flex-col my-4 items-center"
         >
           <div class="p-2 border-b border-gray-300 day-box">{{ day }}</div>
-  
+
           <div v-if="selectedClasse" class="flex my-6 flex-col">
             <div
               v-for="course in coursesByDay(day)"
@@ -597,6 +599,20 @@ export default {
         return classeMatch && trimestreMatch;
       });
     },
+    filteredClasses() {
+      if (!this.selectedNiveau) {
+        // If no niveau is selected, return all classes
+        this.selectedClasse = "";
+        return this.classes.map((classe) => classe);
+      }
+
+      // Filter classes by selected niveau
+      // this.selectedClasse = this.classes[0].id;
+
+      return this.classes
+        .filter((classe) => classe.niveau === this.selectedNiveau)
+        .map((classe) => classe);
+    },
     coursesByDay() {
       return (day) => {
         return this.filteredCourses.filter((course) => course.day === day);
@@ -607,7 +623,6 @@ export default {
 </script>
 
 <style scoped>
-
 .container-parent {
   margin-left: 12px;
 }

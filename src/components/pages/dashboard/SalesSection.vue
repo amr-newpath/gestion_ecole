@@ -102,6 +102,7 @@ export default {
   },
   data() {
     return {
+      paiementsData: [],
       earningChartEl: null,
       paymentsChartEl: null,
       todaysPaymentsCount: ref(0),
@@ -126,13 +127,13 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axiosClient.get("/comptable/paiements");
-        const paiementsData = response.data;
+        const response = await axiosClient.get("/paiements");
+        this.paiementsData = response.data;
 
         // Get the current month's payments
         const currentMonth = new Date().getMonth() + 1;
         const currentYear = new Date().getFullYear();
-        const todaysPayments = paiementsData.filter((payment) => {
+        const todaysPayments = this.paiementsData.filter((payment) => {
           const paymentDate = new Date(payment.created_at);
           return (
             paymentDate.getMonth() + 1 === currentMonth &&
@@ -163,11 +164,11 @@ export default {
     },
     async initializeCharts() {
       try {
-        const response = await axiosClient.get("/comptable/paiements");
-        const paiementsData = response.data;
+        // const response = await axiosClient.get("/paiements");
+        // const paiementsData = response.data;
 
         const paymentsPerDay = {};
-        paiementsData.forEach((payment) => {
+        this.paiementsData.forEach((payment) => {
           const paymentDate = new Date(payment.created_at).toLocaleDateString();
           if (!paymentsPerDay[paymentDate]) {
             paymentsPerDay[paymentDate] = 1;

@@ -9,23 +9,31 @@
             class="block ww-48 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
           <select
-            v-model="selectedClasse"
-            @change="filteredEleves"
-            class="px-8 py-1 border rounded-md focus:outline-none"
-          >
-            <option value="">Classe</option>
-          </select>
-          <select
             v-model="selectedNiveau"
             @change="filteredEleves"
             class="px-8 py-1 border rounded-md focus:outline-none"
           >
             <option value="">Niveau</option>
-            <option value="BAC">BAC1</option>
+            <option value="BAC1">BAC1</option>
             <option value="BAC2">BAC2</option>
-            <option value="CA1">CP</option>
+            <option value="CA1">CA1</option>
           </select>
+          <select
+            id="classe"
+            v-model="selectedClasse"
+            @change="filteredEleves"
+            class="px-8 py-1 border rounded-md focus:outline-none"
+          >
+            <option value="">Classe</option>
 
+            <option
+              v-for="classe in filteredClasses"
+              :key="classe.id"
+              :value="classe.id"
+            >
+              {{ classe.nom }}
+            </option>
+          </select>
           <select
             v-model="selectedStatus"
             class="px-8 py-1 border rounded-md focus:outline-none"
@@ -110,6 +118,7 @@ export default {
   data() {
     return {
       eleves: [],
+      classes: [],
       selectedStatus: "",
       searchQuery: "",
       selectedClasse: "",
@@ -119,6 +128,7 @@ export default {
   },
   created() {
     this.fetchEleves();
+    this.fetchClasses();
   },
   computed: {
     filteredEleves() {
@@ -141,22 +151,46 @@ export default {
       // Filter by classe
       if (this.selectedClasse !== "") {
         filtered = filtered.filter(
-          (eleve) => eleve.classe === this.selectedClasse
+          (eleve) => eleve.classe_id === this.selectedClasse
         );
+
+        console.log("filtered, ", filtered);
       }
 
-      // Filter by niveau
-      if (this.selectedNiveau !== "") {
-        filtered = filtered.filter(
-          (eleve) => eleve.niveau === this.selectedNiveau
-        );
-      }
+
 
       return filtered;
+    },
+    filteredClasses() {
+      if (!this.selectedNiveau) {
+        // If no niveau is selected, return all classes
+        this.selectedClasse = "";
+        return this.classes.map((classe) => classe);
+      }
+
+      // Filter classes by selected niveau
+      // this.selectedClasse = this.classes[0].id;
+
+      return this.classes
+        .filter((classe) => classe.niveau === this.selectedNiveau)
+        .map((classe) => classe);
     },
   },
 
   methods: {
+    fetchClasses() {
+      axiosClient
+        .get("/classes")
+        .then((response) => {
+          this.classes = response.data;
+
+          // this.selectedClasse = this.classes[0].id;
+          // console.log(this.selectedClasse);
+        })
+        .catch((error) => {
+          console.error("Error fetching classes:", error);
+        });
+    },
     fetchEleves() {
       this.loading = true;
 

@@ -39,7 +39,7 @@ export default {
   methods: {
     async fetchEleves() {
       try {
-        const response = await axiosClient.get("/comptable/eleves");
+        const response = await axiosClient.get("/eleves");
         this.eleves = response.data;
         this.calculateGenderPercentage();
       } catch (error) {

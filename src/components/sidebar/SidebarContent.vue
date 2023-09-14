@@ -169,23 +169,6 @@ const isCurrentPath = (path) => {
         />
       </SidebarCollapsible>
 
-      <!-- <SidebarLink
-        :to="{ name: 'AdminProfile' }"
-        :active="isCurrentRoute('AdminProfile')"
-        icon="gg:profile"
-        title="Profile"
-      >
-      </SidebarLink> -->
-
-      <!-- <SidebarLink
-      title="Gestion des Admins"
-      :to="{ name: 'Dashboard' }"
-      :active="isCurrentRoute('Dashboard')"
-      icon="mdi:view-dashboard"
-    /> -->
-
-      <!-- <SidebarCollapsible icon="mdi:shield-star-outline" title="Authentication">
-      </SidebarCollapsible> -->
     </template>
 
     <!-- ?? Sidebar for Administratif -->
@@ -322,8 +305,8 @@ const isCurrentPath = (path) => {
     <template v-if="userRole === 'Eleve'">
       <SidebarLink
         title="Dashboard"
-        :to="{ name: 'EleveDashboard' }"
-        :active="isCurrentRoute('EleveDashboard')"
+        :to="{ name: 'EleveProfile' }"
+        :active="isCurrentRoute('EleveProfile')"
         icon="mdi:view-dashboard"
       />
 
@@ -335,11 +318,25 @@ const isCurrentPath = (path) => {
       />
 
       <SidebarLink
-        title="Consulte les activités"
-        :to="{ name: 'ComptableProfile' }"
-        :active="isCurrentRoute('ComptableProfile')"
-        icon="fluent-mdl2:account-activity"
+        :to="{ name: 'EleveSeances' }"
+        :active="isCurrentRoute('EleveSeances')"
+        icon="fluent-mdl2:publish-course"
+        title="Consulter des seances"
       />
+
+      <SidebarLink
+        title="Profile"
+        :to="{ name: 'EleveProfile' }"
+        :active="isCurrentRoute('EleveProfile')"
+        icon="gg:profile"
+      />
+
+      <!-- <SidebarLink
+        title="Consulter les activités"
+        :to="{ name: 'EleveProfile' }"
+        :active="isCurrentRoute('EleveProfile')"
+        icon="fluent-mdl2:account-activity"
+      /> -->
     </template>
 
     <!-- ?? Sidebar for Prof -->

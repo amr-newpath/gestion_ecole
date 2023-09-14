@@ -8,7 +8,7 @@
           <h2 class="font-semibold text-gray-800">Liste des absences</h2>
         </header>
         <div class="p-3">
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-left space-x-8 mb-4">
             <div class="flex space-x-4">
               <input
                 v-model="searchQuery"
@@ -27,7 +27,7 @@
                   :key="classe.id"
                   :value="classe.id"
                 >
-                  {{ classe.nom }}
+                  {{ classe.nom }} ({{ classe.niveau }})
                 </option>
               </select>
             </div>

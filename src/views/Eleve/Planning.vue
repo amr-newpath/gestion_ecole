@@ -1,5 +1,7 @@
 <template>
-  <div class="container mx-auto mt-8 p-4 bg-white rounded-lg shadow-lg">
+  <div
+    class="container mx-auto mt-4 p-4 bg-white rounded-lg shadow-lg container-parent"
+  >
     <h1 class="text-2xl font-semibold mb-4">Weekly Planner</h1>
 
     <div class="flex space-x-4">
@@ -18,6 +20,7 @@
       </select>
     </div>
 
+    <div class="course-container">
     <div class="flex mt-4">
       <div
         v-for="day in days"
@@ -54,6 +57,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -139,6 +143,15 @@ export default {
 </script>
 
 <style scoped>
+
+.container-parent {
+  margin-left: 12px;
+}
+
+.course-container {
+  max-height: 600px; /* Adjust this value as needed */
+  overflow-y: auto;
+}
 .course-box:hover {
   transform: scale(1.04);
   transition: transform 0.3s ease;

@@ -26,7 +26,7 @@
             :key="classe.id"
             :value="classe.nom"
           >
-            {{ classe.nom }}
+            {{ classe.nom }} ({{ classe.niveau }})
           </option>
         </select>
 

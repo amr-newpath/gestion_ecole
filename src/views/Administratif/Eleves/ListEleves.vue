@@ -16,21 +16,30 @@
                 class="block ww-48 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
               <select
-                v-model="selectedClasse"
-                @change="filteredEleves"
-                class="px-2 py-1 border rounded-md focus:outline-none"
-              >
-                <option value="">Classe</option>
-              </select>
-              <select
                 v-model="selectedNiveau"
                 @change="filteredEleves"
-                class="px-2 py-1 border rounded-md focus:outline-none"
+                class="px-8 py-1 border rounded-md focus:outline-none"
               >
                 <option value="">Niveau</option>
                 <option value="BAC1">BAC1</option>
                 <option value="BAC2">BAC2</option>
-                <option value="CA1">CP</option>
+                <option value="CA1">CA1</option>
+              </select>
+              <select
+                id="classe"
+                v-model="selectedClasse"
+                @change="filteredEleves"
+                class="px-8 py-1 border rounded-md focus:outline-none"
+              >
+                <option value="">Classe</option>
+
+                <option
+                  v-for="classe in filteredClasses"
+                  :key="classe.id"
+                  :value="classe.id"
+                >
+                  {{ classe.nom }}
+                </option>
               </select>
             </div>
             <button
@@ -269,6 +278,7 @@ export default {
       selectedNiveau: "",
       selectedClasse: "",
       eleves: [],
+      classes: [],
       selectedEleve: null,
       isEditModalOpen: false,
       nationalities: [],
@@ -289,22 +299,49 @@ export default {
         });
       }
 
+      // if (this.selectedNiveau) {
+      //   filteredEleves = filteredEleves.filter((eleve) => {
+      //     return eleve.niveau === this.selectedNiveau;
+      //   });
+      // }
+
       if (this.selectedClasse) {
         filteredEleves = filteredEleves.filter((eleve) => {
-          return eleve.classe.id === this.selectedClasse;
-        });
-      }
-
-      if (this.selectedNiveau) {
-        filteredEleves = filteredEleves.filter((eleve) => {
-          return eleve.niveau === this.selectedNiveau;
+          return eleve.classe_id === this.selectedClasse;
         });
       }
 
       return filteredEleves;
     },
+    filteredClasses() {
+      if (!this.selectedNiveau) {
+        // If no niveau is selected, return all classes
+        this.selectedClasse = "";
+        return this.classes.map((classe) => classe);
+      }
+
+      // Filter classes by selected niveau
+      // this.selectedClasse = this.classes[0].id;
+
+      return this.classes
+        .filter((classe) => classe.niveau === this.selectedNiveau)
+        .map((classe) => classe);
+    },
   },
   methods: {
+    fetchClasses() {
+      axiosClient
+        .get("/classes")
+        .then((response) => {
+          this.classes = response.data;
+
+          // this.selectedClasse = this.classes[0].id;
+          // console.log(this.selectedClasse);
+        })
+        .catch((error) => {
+          console.error("Error fetching classes:", error);
+        });
+    },
     getStatusClass(eleve) {
       return eleve.completed === 1
         ? "bg-green-200 text-green-800 rounded-full py-1 px-2  text-center"
@@ -409,6 +446,8 @@ export default {
   },
   created() {
     this.fetchNationalities();
+    this.fetchClasses();
+
   },
   async mounted() {
     await this.fetchEleves();

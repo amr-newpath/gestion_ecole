@@ -18,7 +18,7 @@
       >
         <option value="">Filter by Classe</option>
         <option v-for="classe in classes" :key="classe.id" :value="classe.id">
-          {{ classe.nom }}
+          {{ classe.nom }} ({{ classe.niveau }})
         </option>
       </select>
       <select

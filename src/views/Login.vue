@@ -1,39 +1,65 @@
 <script setup>
 import store from "../store";
-
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { useToast } from "vue-toast-notification"; // Import the toast library
+import "vue-toast-notification/dist/theme-sugar.css";
+
+const $toast = useToast();
 
 const router = useRouter();
 
-let errorMsg = ref('')
+let errorMsg = ref("");
 
 const user = {
   code: "",
   password: "",
-  // remember: false,
+};
+
+const errors = {
+  code: null,
+  password: null,
 };
 
 function login(e) {
   e.preventDefault();
 
-  store.dispatch("login", user).then(() => {
-    router.push({ name: `${store.getters['userRole']}Dashboard` });
-  }).catch(err => {
-    errorMsg.value = err.response.data.error
-  });
+  // Reset errors
+  errors.code = null;
+  errors.password = null;
+
+  // Validate code and password
+  if (!user.code) {
+    errors.code = "Code is required";
+  }
+
+  if (!user.password) {
+    errors.password = "Password is required";
+  }
+
+  // Check if there are validation errors
+  if (errors.code || errors.password) {
+    // If there are errors, do not proceed with login
+    return;
+  }
+
+  store
+    .dispatch("login", user)
+    .then(() => {
+      router.push({ name: `${store.getters["userRole"]}Dashboard` });
+
+      $toast.success("You are Logging successfully!", {
+        position: "bottom-right",
+        duration: 3000,
+      });
+    })
+    .catch((err) => {
+      errorMsg.value = err.response.data.error;
+    });
 }
 </script>
 
 <template>
-  <!--
-    This example requires updating your template:
-
-    ```
-    <html class="h-full bg-white">
-    <body class="h-full">
-    ```
-  -->
   <div
     class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
   >
@@ -71,34 +97,31 @@ function login(e) {
               v-model="user.code"
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
             />
+            <div v-if="errors.code" class="text-red-500">{{ errors.code }}</div>
+            <!-- Display error message -->
           </div>
         </div>
 
         <div>
-          <div class="flex items-center justify-between">
-            <label
-              for="password"
-              class="block text-sm font-medium leading-6 text-gray-900"
-              >Password</label
-            >
-            <div class="text-sm">
-              <a
-                href="#"
-                class="font-semibold text-blue-600 hover:text-blue-500"
-                >Forgot password?</a
-              >
-            </div>
-          </div>
+          <label
+            for="password"
+            class="block text-sm font-medium leading-6 text-gray-900"
+            >Password</label
+          >
           <div class="mt-2">
             <input
               id="password"
               name="password"
               type="password"
-              autocomplete="current-password" 
+              autocomplete="current-password"
               required=""
               v-model="user.password"
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
             />
+            <div v-if="errors.password" class="text-red-500">
+              {{ errors.password }}
+            </div>
+            <!-- Display error message -->
           </div>
         </div>
 
