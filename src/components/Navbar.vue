@@ -15,10 +15,8 @@ import Dropdown from "@/components/Dropdown.vue";
 import DropdownLink from "@/components/DropdownLink.vue";
 import userAvatar from "@/assets/images/avatar.jpg";
 
-const userName = sessionStorage.getItem('userName')
-const userRole = sessionStorage.getItem('userRole')
-
-
+const userName = sessionStorage.getItem("userName");
+const userRole = sessionStorage.getItem("userRole");
 
 const { isFullscreen, toggle: toggleFullScreen } = useFullscreen();
 
@@ -35,7 +33,6 @@ import { useRouter } from "vue-router";
 
 const store = useStore();
 const router = useRouter();
-
 
 // console.log(sessionStorage.getItem('userName'))
 
@@ -58,9 +55,10 @@ function logout() {
         },
       ]"
     >
-
-    <div class="flex items-center gap-2">
-        <p>📌 {{ userRole }} | <span class="font-semibold">{{ userName }}</span> </p>
+      <div class="flex items-center gap-2">
+        <p>
+          📌 {{ userRole }} | <span class="font-semibold">{{ userName.toUpperCase() }}</span>
+        </p>
       </div>
       <div class="flex items-center gap-2">
         <Button
@@ -87,7 +85,7 @@ function logout() {
       </div>
 
       <div class="flex items-center gap-2">
-        <Button
+        <!-- <Button
           iconOnly
           variant="secondary"
           @click="toggleDarkMode()"
@@ -107,7 +105,7 @@ function logout() {
             aria-hidden="true"
             :class="iconSizeClasses"
           />
-        </Button>
+        </Button> -->
 
         <Button
           iconOnly

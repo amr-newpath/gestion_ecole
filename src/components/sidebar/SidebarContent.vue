@@ -108,8 +108,15 @@ const isCurrentPath = (path) => {
       <SidebarLink
         :to="{ name: 'ListMatieres' }"
         :active="isCurrentRoute('ListMatieres')"
-        icon="icon-park-outline:family"
+        icon="tdesign:course"
         title="Gestion des matières"
+      />
+
+      <SidebarLink
+        :to="{ name: 'ListClasses' }"
+        :active="isCurrentRoute('ListClasses')"
+        icon="mdi:google-classroom"
+        title="Gestion des classes"
       />
 
       <!-- <SidebarLink
@@ -161,6 +168,14 @@ const isCurrentPath = (path) => {
           :active="isCurrentRoute('AccountProfs')"
         />
       </SidebarCollapsible>
+
+      <!-- <SidebarLink
+        :to="{ name: 'AdminProfile' }"
+        :active="isCurrentRoute('AdminProfile')"
+        icon="gg:profile"
+        title="Profile"
+      >
+      </SidebarLink> -->
 
       <!-- <SidebarLink
       title="Gestion des Admins"
@@ -226,12 +241,6 @@ const isCurrentPath = (path) => {
         title="Gestion du transport"
       />
 
-      <SidebarLink
-        :to="{ name: 'ListClasses' }"
-        :active="isCurrentRoute('ListClasses')"
-        icon="mdi:google-classroom"
-        title="Gestion des classes"
-      />
 
       <SidebarLink
         :to="{ name: 'CreatePlanning' }"
@@ -350,22 +359,22 @@ const isCurrentPath = (path) => {
       />
 
        <SidebarLink
-        :to="{ name: 'ListSeances' }"
-        :active="isCurrentRoute('ListSeances')"
+        :to="{ name: 'ListSeancesProf' }"
+        :active="isCurrentRoute('ListSeancesProf')"
         icon="fluent-mdl2:publish-course"
         title="Gestion des seances"
       />
 
       <SidebarLink
-        :to="{ name: 'ListAbsences' }"
-        :active="isCurrentRoute('ListAbsences')"
+        :to="{ name: 'ListAbsencesProf' }"
+        :active="isCurrentRoute('ListAbsencesProf')"
         icon="ic:outline-present-to-all"
         title="Consulter les absences"
       />
 
       <SidebarLink
-        :to="{ name: 'ListMatieres' }"
-        :active="isCurrentRoute('ListMatieres')"
+        :to="{ name: 'ListMatieresProf' }"
+        :active="isCurrentRoute('ListMatieresProf')"
         icon="tdesign:course"
         title="Consulter les matières"
       />

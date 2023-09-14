@@ -265,7 +265,7 @@ export default {
 }
 
 .create-account-button {
-  background-color: #0096cb;
+  background-color: #309bc3;
   color: white;
   padding: 6px 12px;
   border: none;

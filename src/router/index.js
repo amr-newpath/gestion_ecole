@@ -180,6 +180,12 @@ const routes = [
         name: "ListMatieres",
         component: () => import("@/views/Admin/Matieres/ListMatieres.vue"),
       },
+      {
+        path: "classes/",
+        component: () =>
+          import("@/views/Admin/GSClasses/ListClasses.vue"),
+        name: "ListClasses",
+      },
     ],
   },
   {
@@ -226,12 +232,7 @@ const routes = [
           import("@/views/Administratif/Services/ListServices.vue"),
         name: "ListServices",
       },
-      {
-        path: "classes/",
-        component: () =>
-          import("@/views/Administratif/Classes/TableClasses.vue"),
-        name: "ListClasses",
-      },
+      
       {
         path: "plannings/",
         component: () =>
@@ -321,7 +322,7 @@ const routes = [
         path: "seances",
         component: () =>
           import("@/views/Prof/GSSeances/ListSeances.vue"),
-        name: "ListSeances",
+        name: "ListSeancesProf",
       },
       {
         path: "/seances/:id",
@@ -333,13 +334,13 @@ const routes = [
         path: "absences",
         component: () =>
           import("@/views/Prof/Absences.vue"),
-        name: "ListAbsences",
+        name: "ListAbsencesProf",
       },
       {
         path: "matieres",
         component: () =>
           import("@/views/Prof/Matieres.vue"),
-        name: "ListMatieres",
+        name: "ListMatieresProf",
       },
       {
         path: "profile",

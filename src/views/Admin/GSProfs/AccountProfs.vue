@@ -80,6 +80,35 @@
         </div>
       </div>
 
+      <!-- Checkboxes for Matieres -->
+      <div class="mt-6">
+        <label class="block text-sm font-medium text-gray-700">Matieres</label>
+        <div class="mt-2 flex space-x-4">
+          <label
+            v-for="(matiere, index) in matieres"
+            :key="index"
+            :class="{
+              'border-2 border-blue-600 rounded-lg bg-blue-100':
+                selectedMatieres.includes(matiere.id),
+              'border border-gray-300 rounded-lg': !selectedMatieres.includes(
+                matiere.id
+              ),
+            }"
+            class="flex items-center justify-center cursor-pointer h-12 w-1/2"
+          >
+            <input
+              v-model="selectedMatieres"
+              type="checkbox"
+              :id="'matiere-' + matiere.id"
+              :value="matiere.id"
+              class="hidden"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >{{ matiere.name }} ({{ matiere.niveau }})</span
+            >
+          </label>
+        </div>
+      </div>
 
       <div class="mt-6">
         <button
@@ -104,6 +133,8 @@ const $toast = useToast();
 export default {
   data() {
     return {
+      matieres: [],
+      selectedMatieres: [],
       user: {
         nom: "",
         prenom: "",
@@ -113,10 +144,26 @@ export default {
       },
     };
   },
+  async mounted() {
+    await this.fetchmatieres();
+  },
   methods: {
+    async fetchmatieres() {
+      try {
+        const response = await axiosClient.get("/admin/matieres");
+        this.matieres = response.data;
+      } catch (error) {
+        console.error("Error fetching matieres:", error);
+      }
+    },
     createUser() {
+      const requestData = {
+        user: this.user,
+        selectedMatieres: this.selectedMatieres, 
+      };
+
       axiosClient
-        .post(`/admin/create-prof`, this.user) // Update the API endpoint
+        .post(`/admin/create-prof`, requestData) 
         .then((response) => {
           console.log("User created:", response.data);
           // Reset the form
@@ -127,6 +174,7 @@ export default {
             email: "",
             cin: "",
           };
+          this.selectedMatieres = []; 
 
           $toast.success("Prof created successfully", {
             position: "bottom-right",
@@ -134,7 +182,6 @@ export default {
           });
         })
         .catch((error) => {
-          // console.error("Error creating user:", error);
           $toast.error("An error occurred", {
             position: "bottom-right",
             duration: 3000,
