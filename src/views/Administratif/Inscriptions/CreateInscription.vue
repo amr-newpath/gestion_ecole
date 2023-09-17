@@ -423,12 +423,25 @@
                     Classe
                   </label>
 
-                  <input
+                  <select
+                    id="classe"
+                    v-model="user.classe_id"
+                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  >
+                    <option
+                      v-for="classe in classes"
+                      :key="classe.id"
+                      :value="classe.id"
+                    >
+                      {{ classe.nom }}
+                    </option>
+                  </select>
+                  <!-- <input
                     id="classe"
                     type="text"
                     v-model="user.classe"
                     class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
+                  /> -->
                 </div>
               </div>
               <div class="w-full lg:w-6/12 px-4">
@@ -439,15 +452,7 @@
                   >
                     Situation des parents
                   </label>
-                  <input
-                    v-if="user.pereSituation !== ''"
-                    id="situation-des-parents"
-                    type="text"
-                    v-model="user.pereSituation"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
                   <select
-                    v-else
                     id="situation-des-parents"
                     v-model="user.situationParents"
                     class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
@@ -692,6 +697,7 @@ export default {
       parentStatus: "",
       selectedParent: "",
       selectedParentName: "",
+      parentId: "",
       annualServices: [],
       monthlyServices: [],
       selectedMonthlyServices: new Set(), // Use a Set to store selected service IDs
@@ -703,7 +709,7 @@ export default {
       nationalities: [],
       parents: [],
       filteredParents: [],
-      // classes: [],
+      classes: [],
       step: 1,
       showPrintStep: false,
       user: {
@@ -718,7 +724,7 @@ export default {
         adresse: "",
         etablissementPre: "",
         anneeScolaire: "",
-        classe: "",
+        classe_id: "",
         situationParents: "Marié",
         niveau: "BAC",
 
@@ -858,6 +864,17 @@ export default {
     //     console.error("Error fetching niveaux:", error);
     //   }
     // },
+    fetchClasses() {
+      axiosClient
+        .get("/classes")
+        .then((response) => {
+          this.classes = response.data;
+          this.user.classe_id = this.classes[0].id;
+        })
+        .catch((error) => {
+          console.error("Error fetching classes:", error);
+        });
+    },
     async fetchParents() {
       try {
         const response = await axiosClient.get("/administratif/parents"); // Replace with your Laravel API endpoint
@@ -881,6 +898,9 @@ export default {
     },
     selectParent(parent) {
       this.selectedParent = parent.id;
+      this.parentId = parent.id
+
+      // console.log("parentId, ",);
       this.selectedParentName = parent.nom_complet;
       this.populateParentForm();
       this.filteredParents = []; // Clear the filteredParents
@@ -914,7 +934,7 @@ export default {
             this.user.pereCivilite = parent.civilite;
             this.user.nom = parent.nom;
             this.user.adresse = parent.adresse;
-            this.user.situationParents = parent.situation;
+            // this.user.situationParents = parent.situation;
             this.user[`${field}Disabled`] = true;
           }
         }
@@ -951,7 +971,7 @@ export default {
           ...this.user,
 
           parent_option: this.parentStatus,
-          parentId: this.selectedParent,
+          parentId: this.parentId,
           selectedAnnualServices: this.selectedAnnualServices,
           customAnnualPrices: this.customAnnualPrices,
           selectedMonthlyServices: Array.from(this.selectedMonthlyServices),
@@ -1098,6 +1118,7 @@ export default {
     this.fetchParents();
     this.fetchNationalities();
     this.fetchServices();
+    this.fetchClasses();
     // this.fetchNiveaux()
   },
 };

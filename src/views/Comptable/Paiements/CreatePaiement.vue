@@ -1,59 +1,65 @@
 <template>
   <div>
-    <!-- Search Input -->
-    <div class="w-full px-4 py-8 mx-80">
-      <span class="text-base font-semibold mx-4">Selectionner un eleve</span>
+    <div class="flex justify-center">
+      <!-- Search Input for Eleve -->
+      <div class="w-full px-4 py-8 md:w-1/2 lg:w-1/3 mx-auto">
+        <h2 class="text-lg font-semibold mb-4">Sélectionner un élève</h2>
 
-      <input
-        id="eleveSearch"
-        v-model="selectedEleveName"
-        @input="filterEleves"
-        @focus="filteredEleves = []"
-        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-1/3 ease-linear transition-all duration-150"
-        placeholder="Search Eleve..."
-      />
-      <ul
-        v-if="filteredEleves.length"
-        class="absolute z-10 mt-1 w-1/4 bg-white border border-blueGray-300 rounded-lg shadow-md mx-48"
-      >
-        <li
-          v-for="eleve in filteredEleves"
-          :key="eleve.id"
-          @click="selectEleve(eleve)"
-          class="cursor-pointer px-4 py-2 hover:bg-blue-100"
+        <input
+          id="eleveSearch"
+          v-model="selectedEleveName"
+          @input="filterEleves"
+          @focus="filteredEleves = []"
+          class="w-full px-3 py-2 placeholder-gray-300 text-gray-700 bg-white rounded-md text-sm shadow-md focus:outline-none focus:ring focus:ring-blue-200 transition duration-150"
+          placeholder="Rechercher un élève..."
+        />
+
+        <ul
+          v-if="filteredEleves.length"
+          class="absolute z-10 mt-2 w-full max-w-sm bg-white border border-gray-300 rounded-lg shadow-md"
         >
-          {{ eleve.prenom }} {{ eleve.nom }}
-        </li>
-      </ul>
+          <li
+            v-for="eleve in filteredEleves"
+            :key="eleve.id"
+            @click="selectEleve(eleve)"
+            class="cursor-pointer px-4 py-2 hover:bg-blue-100"
+          >
+            {{ eleve.prenom }} {{ eleve.nom }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Search Input for Groupe -->
+      <div class="w-full px-4 py-8 md:w-1/2 lg:w-1/3 mx-auto">
+        <h2 class="text-lg font-semibold mb-4">Sélectionner un parent</h2>
+
+        <input
+          id="groupeSearch"
+          v-model="selectedGroupeName"
+          @input="filterGroupes"
+          @focus="filteredGroupes = []"
+          class="w-full px-3 py-2 placeholder-gray-300 text-gray-700 bg-white rounded-md text-sm shadow-md focus:outline-none focus:ring focus:ring-blue-200 transition duration-150"
+          placeholder="Rechercher un parent..."
+        />
+
+        <ul
+          v-if="filteredGroupes.length"
+          class="absolute z-10 mt-2 w-full max-w-sm bg-white border border-gray-300 rounded-lg shadow-md"
+        >
+          <li
+            v-for="groupe in filteredGroupes"
+            :key="groupe.id"
+            @click="selectGroupe(groupe)"
+            class="cursor-pointer px-4 py-2 hover:bg-blue-100"
+          >
+            {{ groupe.nom_complet }}
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <!-- Search Input for Groupe -->
-    <!-- !! <div class="w-full px-4 py-2">
-      <input
-        id="groupeSearch"
-        v-model="selectedGroupeName"
-        @input="filterGroupes"
-        @focus="filteredGroupes = []"
-        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-        placeholder="Search Groupe Familiale..."
-      />
-      <ul
-        v-if="filteredGroupes.length"
-        class="absolute z-10 mt-1 w-full bg-white border border-blueGray-300 rounded-lg shadow-md"
-      >
-        <li
-          v-for="groupe in filteredGroupes"
-          :key="groupe.id"
-          @click="selectGroupe(groupe)"
-          class="cursor-pointer px-4 py-2 hover:bg-blue-100"
-        >
-          {{ groupe.nom_complet }}
-        </li>
-      </ul>
-    </div> -->
-
-    <div class="flex justify-center items-center h-screen bg-gray-100">
-      <!-- !! <div
+    <div class="flex justify-center items-center -mt-40 h-screen bg-gray-100">
+      <div
         v-if="selectedGroupe"
         class="max-w-lg w-full md:w-1/2 mx-2 my-8 mb-4 md:mb-0 overflow-y-auto h-auto"
       >
@@ -65,18 +71,32 @@
             {{ selectedGroupe.nom_complet }}
           </h3>
         </div>
-        <div v-if="isDropdownOpen" class="p-4 mt-2 bg-white rounded-md shadow">
+        <div
+          v-if="isDropdownOpen"
+          class="p-4 mt-2 bg-white rounded-md shadow max-h-96 overflow-auto"
+        >
+          <div v-if="loadingData" class="flex justify-center items-center h-32">
+            <div
+              class="w-12 h-12 border-t-4 border-blue-500 border-solid rounded-full animate-spin"
+            ></div>
+          </div>
+
           <div v-for="eleve in selectedGroupe.eleves" :key="eleve.id">
-            <h4>{{ eleve.prenom }} {{ eleve.nom }}</h4>
+            <hr class="my-2 border-gray-300" />
+
+            <p class="text-base font-medium mb-4">
+              {{ eleve.nom_complet }} - {{ eleve.niveau }}
+            </p>
+
             <div class="flex justify">
               <label class="flex items-center mb-2">
                 <input
                   type="checkbox"
                   v-model="eleve.selectedFraisInscription"
                   class="mr-2 cursor-pointer"
-                  :disabled="isFraisInscriptionExisting()"
+                  :disabled="isFraisInscriptionExisting(eleve)"
                   :style="{
-                    'background-color': isFraisInscriptionExisting()
+                    'background-color': isFraisInscriptionExisting(eleve)
                       ? 'green'
                       : '',
                   }"
@@ -85,17 +105,63 @@
               </label>
               <div class="flex mx-16">
                 <span class="text-gray-600"
-                  >{{ fraisInscriptionPrice }} DHs</span
+                  >{{ fraisInscriptionPriceEleve[eleve.id] }} DHs</span
                 >
               </div>
             </div>
             <hr class="my-2 border-gray-300" />
 
+            <div class="flex justify">
+              <!-- <div class="flex-grow mx-24"> -->
+              <div class="flex-none mr-4">
+                <div v-for="(month, monthIndex) in months" :key="monthIndex">
+                  <!-- <pre>{{month}}</pre> -->
+                  <!-- <pre>{{eleveSelectedMonths[eleve.id + monthIndex]}}</pre> -->
+                  <label class="flex items-center">
+                    <input
+                      type="checkbox"
+                      v-model="eleveSelectedMonths[eleve.id]"
+                      :value="month"
+                      class="mr-2 cursor-pointer"
+                      :disabled="isMonthExisting(month, eleve)"
+                      :style="{
+                        'background-color': isMonthExisting(month, eleve)
+                          ? 'green'
+                          : '',
+                      }"
+                    />
+                    {{ month }}
+                    <span
+                      v-if="isMonthPending(month, eleve)"
+                      class="text-yellow-500 ml-2"
+                    >
+                      (pending ...)
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <div class="flex-grow mx-24">
+                <div v-for="(month, monthIndex) in months" :key="monthIndex">
+                  <span class="text-gray-600">
+                    {{ getPriceForMonth(month, eleve)
+                    }}<span class="mx-2"
+                      >DHs
+                      <span
+                        v-if="getRestePriceMonth(month, eleve)"
+                        class="text-yellow-500"
+                        >- (Reste: {{ getRestePriceMonth(month, eleve) }})</span
+                      >
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <!-- </div> -->
+            </div>
           </div>
         </div>
-      </div> -->
+      </div>
 
-      <!-- Dropdown Content -->
+      <!-- ? Dropdown Content ELEVE -->
       <div
         v-if="isEleveSelected"
         class="max-w-lg w-full md:w-1/2 mx-2 my-8 mb-4 md:mb-0 overflow-y-auto h-auto"
@@ -142,7 +208,7 @@
             </label>
             <div class="flex mx-16">
               <span class="text-gray-600">
-                {{ fraisInscriptionPrice }} DHs 
+                {{ fraisInscriptionPrice }} DHs
                 <span v-if="resteFraisInscription" class="text-yellow-500"
                   >- (Reste: {{ resteFraisInscription }})</span
                 ></span
@@ -165,12 +231,7 @@
                       'background-color': isMonthExisting(month) ? 'green' : '',
                     }"
                   />
-                  <!-- <span
-                    :class="{
-                      'text-gray-600': !isMonthPending(month),
-                      'text-yellow-500': isMonthPending(month),
-                    }"
-                  > -->
+
                   {{ month }}
                   <span
                     v-if="isMonthPending(month)"
@@ -178,18 +239,19 @@
                   >
                     (pending ...)
                   </span>
-                  <!-- </span> -->
                 </label>
               </div>
             </div>
-            <div class="flex-grow mx-24">
+            <div class="flex-grow mx-14">
               <div v-for="(month, monthIndex) in months" :key="monthIndex">
                 <span class="text-gray-600">
                   {{ getPriceForMonth(month)
                   }}<span class="mx-2"
-                    >DHs 
-                    <span v-if="getRestePriceMonth(month)" class="text-yellow-500"
-                      >- (Reste: {{ getRestePriceMonth(month) }})</span
+                    >DHs
+                    <span
+                      v-if="resteMesualService[month]"
+                      class="text-red-500"
+                      >- (Reste: {{ resteMesualService[month] }})</span
                     >
                   </span>
                 </span>
@@ -300,31 +362,6 @@
           </button>
         </div>
       </div>
-
-      <!-- !! Table Form: Services -->
-      <!-- <div class="max-w-xl w-full mx-3 mt-6 p-4 bg-white rounded-md shadow">
-        <h3 class="text-lg font-semibold">Services</h3>
-        <div class="mt-4">
-          <table class="w-full">
-            <thead>
-              <tr>
-                <th class="px-4 py-2">Service</th>
-                <th class="px-4 py-2">Designation</th>
-                <th class="px-4 py-2">Frais</th>
-              </tr>
-            </thead>
-            <tbody> -->
-      <!-- Add rows dynamically here -->
-      <!-- <tr>
-                <td class="border px-4 py-2">Service 1</td>
-                <td class="border px-4 py-2">Designation 1</td>
-                <td class="border px-4 py-2">Frais 1</td>
-              </tr> -->
-      <!-- ... more rows ... -->
-      <!-- </tbody>
-          </table>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -346,15 +383,18 @@ export default {
         services: [], // Initialize services array for the selected eleve
       },
       fraisInscriptionPrice: "",
+      fraisInscriptionPriceEleve: {},
       resteFraisInscription: "",
+      resteMesualService: {},
+      eleveSelectedMonths: {},
       selectedEleveName: "",
       isEleveSelected: false,
       isDropdownOpen: false,
       eleves: [],
+      familles: [],
       selectedGroupeName: "", // The input field value for Groupe familiale search
       filteredGroupes: [], // Filtered Groupe familiale results
       selectedGroupe: null, // Selected Groupe familiale object
-      familles: [],
       paiements: [],
       paymentMethods: ["Espèce", "Chèque", "TPE", "Virement", "Versement"],
       selectedPaymentMethods: [],
@@ -388,16 +428,42 @@ export default {
     totalAmount() {
       let sum = 0;
 
-      this.selectedEleve.selectedMonths.forEach((month) => {
-        sum += parseFloat(this.selectedEleve[month]);
-      });
+      if (this.selectedEleve) {
+        this.selectedEleve.selectedMonths.forEach((month) => {
+          sum += parseFloat(this.selectedEleve[month]);
+        });
 
-      if (this.selectedEleve.selectedFraisInscription) {
-        sum += parseFloat(this.fraisInscriptionPrice);
+        if (this.selectedEleve.selectedFraisInscription) {
+          sum += parseFloat(this.fraisInscriptionPrice);
+        }
+
+        if (this.selectedEleve.selectedCredit) {
+          sum += parseFloat(this.creditPrice);
+        }
       }
 
-      if (this.selectedEleve.selectedCredit) {
-        sum += parseFloat(this.creditPrice);
+      if (this.selectedGroupe) {
+        this.selectedGroupe.eleves.forEach((eleve) => {
+          // console.log("eleve, ", this.eleveSelectedMonths[eleve.id]);
+
+          if (eleve.selectedFraisInscription) {
+            sum += parseFloat(this.fraisInscriptionPriceEleve[eleve.id]);
+          }
+
+          this.eleveSelectedMonths[eleve.id].forEach((month) => {
+            // console.log(month);
+            sum += parseFloat(eleve[month + `${eleve.id}`]);
+          });
+
+          // this.months.forEach((month) => {
+          //   this.eleveSelectedMonths[eleve.id + `${month}`].forEach(
+          //     (selectedMonth) => {
+          //       console.log("selectedMonth, ", selectedMonth);
+          //       sum += parseFloat(eleve[selectedMonth]);
+          //     }
+          //   );
+          // });
+        });
       }
 
       this.avance = sum.toFixed(2);
@@ -423,7 +489,7 @@ export default {
     },
   },
   methods: {
-    isMonthPending(month) {
+    isMonthPending(month, eleve = "") {
       if (
         this.selectedEleve &&
         this.selectedEleve.selectedMonths &&
@@ -434,6 +500,33 @@ export default {
         // console.log('pending', paymentData);
 
         const pendingPayments = this.paiements.filter(
+          (paiement) => paiement.pending === 1
+        );
+
+        // console.log("pendingPayments, ", pendingPayments);
+
+        for (const paiement of pendingPayments) {
+          const monthlyService = paiement.services.find(
+            (service) =>
+              (service.type === "mensuel" &&
+                service.service === "Frais scolarité" &&
+                service.pivot.month === month) ||
+              (service.type === "mensuel" &&
+                service.service === "Transport" &&
+                service.pivot.month === month)
+          );
+
+          if (monthlyService) {
+            return true;
+          }
+        }
+      } else if (
+        this.selectedGroupe &&
+        eleve &&
+        eleve.selectedMonths &&
+        eleve.paiements
+      ) {
+        const pendingPayments = eleve.paiements.filter(
           (paiement) => paiement.pending === 1
         );
 
@@ -494,310 +587,553 @@ export default {
         ).toFixed(2);
       }
     },
+
+    // submitPaymentGroup() {
+    // },
+
     async submitPayment() {
-      // Calculate the total avance for the payment
-      let totalAvance = parseFloat(this.avance);
-
-      if (this.selectedEleve.selectedCredit) {
-        let originalTotalAvance = totalAvance; // Store the original totalAvance value
-
-        const sortedPaiements = this.paiements.slice().sort((a, b) => {
-          return new Date(a.created_at) - new Date(b.created_at);
-        });
-
-        for (const paiement of sortedPaiements) {
-          if (totalAvance <= 0) {
-            break; // No more credit to distribute
-          }
-
-          if (paiement.status === "Not completed") {
-            // Calculate the remaining amount needed to complete this paiement
-            const remainingAmount = parseFloat(paiement.reste);
-
-            // Calculate the avance to be applied to this paiement
-            const avanceToApply = Math.min(totalAvance, remainingAmount);
-
-            // Update the paiement's avance and reste
-            paiement.avance = (
-              parseFloat(paiement.avance) + avanceToApply
-            ).toFixed(2);
-            paiement.reste = (remainingAmount - avanceToApply).toFixed(2);
-
-            // Update the paiement status to "Completed" if the reste becomes zero
-            if (paiement.reste <= 0) {
-              paiement.status = "Completed";
-            }
-
-            await axiosClient.put(`/comptable/update-payment/${paiement.id}`, {
-              avance: paiement.avance,
-              reste: paiement.reste,
-              status: paiement.status,
-            });
-
-            
-            $toast.success("Payment updated successfully!", {
-              position: "bottom-right",
-              duration: 3000,
-            });
-          
-
-            totalAvance -= avanceToApply;
-          }
-        }
-
-        const sortedServices = this.selectedEleve.services
-          .slice()
-          .sort((a, b) => {
-            const priorityOrder = [
-              "Frais d'inscription",
-              "Frais scolarité",
-              "Transport",
-            ];
-
-            return (
-              priorityOrder.indexOf(a.service) -
-              priorityOrder.indexOf(b.service)
-            );
-          });
-
-        for (const paiement of sortedPaiements) {
-          console.log("originalTotalAvance, ", originalTotalAvance);
-          if (originalTotalAvance <= 0) {
-            break; // No more credit to distribute
-          }
-
-          for (const paiementService of paiement.services) {
-            if (paiementService.pivot.status === "Not Completed") {
-              const remainingServiceAmount = parseFloat(
-                paiementService.pivot.reste
-              );
-
-              const avanceToApplyToService = Math.min(
-                originalTotalAvance,
-                remainingServiceAmount
-              );
-
-              paiementService.pivot.avance = (
-                parseFloat(paiementService.pivot.avance) +
-                avanceToApplyToService
-              ).toFixed(2);
-              paiementService.pivot.reste = (
-                remainingServiceAmount - avanceToApplyToService
-              ).toFixed(2);
-
-              if (paiementService.pivot.reste <= 0) {
-                paiementService.pivot.status = "Completed";
-              }
-
-              await axiosClient.put(
-                `/comptable/paiementService/${paiementService.pivot.id}`,
-                {
-                  avance: paiementService.pivot.avance,
-                  reste: paiementService.pivot.reste,
-                  status: paiementService.pivot.status,
-                }
-              );
-
-              // Reduce the original total avance by the amount applied to this service paiement
-              originalTotalAvance -= avanceToApplyToService;
-
-              this.$router.push({ name: 'CreatePaiement' });
-
-            }
-          }
-        }
-      }
-
-      if (totalAvance > 0) {
-        // Calculate the avance distribution based on the priority
-        const avanceDistribution = {};
-
-        let hasChequeMode = false;
-        for (const method of this.selectedPaymentMethods) {
-          if (method === "Chèque") {
-            hasChequeMode = true;
-            break;
-          }
-        }
-
-        // Create a new payment entry in the paiement table
-        const paymentData = {
-          montant: this.totalAmount,
-          avance: this.avance,
-          reste: this.reste,
-          mode: this.modePaiement,
-          num_cheque: this.referenceNumber,
-          status: this.reste > 0 ? "Not completed" : "completed",
-          pending: hasChequeMode,
-          eleve_id: this.selectedEleve.id,
-        };
-
+      if (this.selectedGroupe) {
         try {
-          const response = await axiosClient.post(
-            "/comptable/create-paiement",
-            paymentData
-          );
+          let totalAvance = parseFloat(this.avance);
 
-          if (response.status === 201) {
-            $toast.success("Payment created successfully!", {
-              position: "bottom-right",
-              duration: 3000,
-            });
+          // console.log(
+          //   "this.selectedPaymentMethods, ",
+          //   this.selectedPaymentMethods
+          // );
+
+          const avanceDistribution = {};
+
+          let hasChequeMode = false;
+          for (const method of this.selectedPaymentMethods) {
+            if (method === "Chèque") {
+              hasChequeMode = true;
+              break;
+            }
           }
 
-          const paiementId = response.data.id; // Get the created paiement_id
-
-          // console.log("paiementId, ", paiementId);
-
-          // Create entries in modes table for selected payment methods
-          for (const selectedPaymentMethod of this.selectedPaymentMethods) {
-            const price = this.paymentMethodPrices[selectedPaymentMethod];
-            if (price > 0) {
-              const modeData = {
-                type: selectedPaymentMethod, // Assuming selectedPaymentMethod is "Espèce", "Chèque", or "TPE"
-                montant: price,
-                paid: selectedPaymentMethod === "Chèque" ? false : true, // You might need to adjust this based on your logic
-                ref:
-                  selectedPaymentMethod === "Chèque"
-                    ? this.referenceNumber
-                    : null,
-                paiement_id: paiementId,
+          this.selectedGroupe.eleves.forEach(async (eleve) => {
+            if (
+              totalAvance > 0 &&
+              (eleve.selectedFraisInscription ||
+                this.eleveSelectedMonths[eleve.id])
+            ) {
+              // Create a new payment entry in the paiement table
+              const paymentData = {
+                montant: this.totalAmount,
+                avance: this.avance,
+                reste: this.reste,
+                mode: this.modePaiement,
+                num_cheque: this.referenceNumber,
+                status: this.reste > 0 ? "Not completed" : "completed",
+                pending: hasChequeMode,
+                eleve_id: eleve.id,
               };
 
-              await axiosClient.post("/comptable/create-mode", modeData);
-            }
-          }
-
-          console.log("paiementId, ", this.selectedEleve.selectedMonths);
-          // Create entries in paiement_service table based on selected services and months
-          for (const month of this.selectedEleve.selectedMonths) {
-            // Check if "Frais d'inscription" checkbox is selected and it's Sept month
-
-            console.log(this.selectedEleve.selectedFraisInscription);
-            if (
-              this.selectedEleve.selectedFraisInscription &&
-              month === "Sept"
-            ) {
-              const fraisInscriptionService = this.selectedEleve.services.find(
-                (service) =>
-                  service.type === "annuel" &&
-                  service.service === "Frais d'inscription"
+              // try {
+              const response = await axiosClient.post(
+                "/comptable/create-paiement",
+                paymentData
               );
 
-              console.log("fraisInscriptionService, ", fraisInscriptionService);
+              // debugger;
 
-              if (fraisInscriptionService) {
-                const price = fraisInscriptionService.pivot.price;
-                const avance = Math.min(totalAvance, price);
-                const reste = price - avance;
+              const paiementId = response.data.id; // Get the created paiement_id
 
-                const status = reste > 0 ? "Not Completed" : "Completed";
+              // console.log("paymentId, ", paiementId);
 
-                // console.log('fraisInscriptionService.id, ', fraisInscriptionService.id);
+              for (const selectedPaymentMethod of this.selectedPaymentMethods) {
+                const price = this.paymentMethodPrices[selectedPaymentMethod];
 
-                const paiementServiceData = {
-                  paiement_id: paiementId,
-                  service_id: fraisInscriptionService.id,
-                  month: month,
-                  price: price,
-                  avance: avance,
-                  reste: reste,
-                  status: status,
-                  paid: avance > 0,
-                };
+                console.log("price, ", price);
 
-                await axiosClient.post(
-                  "/comptable/create-paiement-service",
-                  paiementServiceData
+                if (price > 0) {
+                  const modeData = {
+                    type: selectedPaymentMethod, // Assuming selectedPaymentMethod is "Espèce", "Chèque", or "TPE"
+                    montant: price,
+                    paid: selectedPaymentMethod === "Chèque" ? false : true, // You might need to adjust this based on your logic
+                    ref:
+                      selectedPaymentMethod === "Chèque"
+                        ? this.referenceNumber
+                        : null,
+                    paiement_id: paiementId,
+                  };
+
+                  console.log("mode data, ", modeData);
+
+                  const response = await axiosClient.post(
+                    "/comptable/create-mode",
+                    modeData
+                  );
+
+                  console.log("mode response, ", response);
+                }
+              }
+
+              // debugger;
+
+              // console.log("paiementId, ", eleve.selectedMonths);
+              // Create entries in paiement_service table based on selected services and months
+              for (const month of this.eleveSelectedMonths[eleve.id]) {
+                // Check if "Frais d'inscription" checkbox is selected and it's Sept month
+
+                // console.log(eleve.selectedFraisInscription);
+                if (eleve.selectedFraisInscription && month === "Sept") {
+                  const fraisInscriptionService = eleve.services.find(
+                    (service) =>
+                      service.type === "annuel" &&
+                      service.service === "Frais d'inscription"
+                  );
+
+                  // console.log(
+                  //   "fraisInscriptionService, ",
+                  //   fraisInscriptionService
+                  // );
+
+                  if (fraisInscriptionService) {
+                    const price = fraisInscriptionService.pivot.price;
+                    const avance = Math.min(totalAvance, price);
+                    const reste = price - avance;
+
+                    const status = reste > 0 ? "Not Completed" : "Completed";
+
+                    // console.log('fraisInscriptionService.id, ', fraisInscriptionService.id);
+
+                    const paiementServiceData = {
+                      paiement_id: paiementId,
+                      service_id: fraisInscriptionService.id,
+                      month: month,
+                      price: price,
+                      avance: avance,
+                      reste: reste,
+                      status: status,
+                      paid: avance > 0,
+                    };
+
+                    await axiosClient.post(
+                      "/comptable/create-paiement-service",
+                      paiementServiceData
+                    );
+
+                    totalAvance -= avance;
+                  }
+                }
+
+                // Distribute avance on "Frais scolarité" service
+                const selectedFraisScolariteService = eleve.services.find(
+                  (service) =>
+                    service.type === "mensuel" &&
+                    service.service === "Frais scolarité"
                 );
 
-                totalAvance -= avance;
-              }
-            }
+                if (selectedFraisScolariteService) {
+                  const avance = Math.min(
+                    totalAvance,
+                    selectedFraisScolariteService.pivot.price
+                  );
+                  avanceDistribution[selectedFraisScolariteService.id] = avance;
+                  totalAvance -= avance;
+                }
 
-            // Distribute avance on "Frais scolarité" service
-            const selectedFraisScolariteService =
-              this.selectedEleve.services.find(
-                (service) =>
-                  service.type === "mensuel" &&
-                  service.service === "Frais scolarité"
-              );
-
-            if (selectedFraisScolariteService) {
-              const avance = Math.min(
-                totalAvance,
-                selectedFraisScolariteService.pivot.price
-              );
-              avanceDistribution[selectedFraisScolariteService.id] = avance;
-              totalAvance -= avance;
-            }
-
-            // Distribute avance on "Transport" service
-            const selectedTransportService = this.selectedEleve.services.find(
-              (service) =>
-                service.type === "mensuel" && service.service === "Transport"
-            );
-
-            if (selectedTransportService) {
-              const avance = Math.min(
-                totalAvance,
-                selectedTransportService.pivot.price
-              );
-              avanceDistribution[selectedTransportService.id] = avance;
-              totalAvance -= avance;
-            }
-
-            // Create entries in paiement_service table for selected services and month
-            for (const service of this.selectedEleve.services) {
-              if (
-                avanceDistribution.hasOwnProperty(service.id) ||
-                (service.type === "mensuel" &&
-                  (service.service === "Frais scolarité" ||
-                    service.service === "Transport"))
-              ) {
-                const price = service.pivot.price;
-                const avance = avanceDistribution[service.id] || 0;
-                const reste = price - avance;
-
-                const status = reste > 0 ? "Not Completed" : "Completed";
-
-                const paiementServiceData = {
-                  paiement_id: paiementId,
-                  service_id: service.id,
-                  month: month,
-                  price: price,
-                  avance: avance,
-                  reste: reste,
-                  status: status,
-                  paid: avance > 0,
-                };
-
-                await axiosClient.post(
-                  "/comptable/create-paiement-service",
-                  paiementServiceData
+                // Distribute avance on "Transport" service
+                const selectedTransportService = eleve.services.find(
+                  (service) =>
+                    service.type === "mensuel" &&
+                    service.service === "Transport"
                 );
+
+                if (selectedTransportService) {
+                  const avance = Math.min(
+                    totalAvance,
+                    selectedTransportService.pivot.price
+                  );
+                  avanceDistribution[selectedTransportService.id] = avance;
+                  totalAvance -= avance;
+                }
+
+                // Create entries in paiement_service table for selected services and month
+                for (const service of eleve.services) {
+                  if (
+                    avanceDistribution.hasOwnProperty(service.id) ||
+                    (service.type === "mensuel" &&
+                      (service.service === "Frais scolarité" ||
+                        service.service === "Transport"))
+                  ) {
+                    const price = service.pivot.price;
+                    const avance = avanceDistribution[service.id] || 0;
+                    const reste = price - avance;
+
+                    const status = reste > 0 ? "Not Completed" : "Completed";
+
+                    const paiementServiceData = {
+                      paiement_id: paiementId,
+                      service_id: service.id,
+                      month: month,
+                      price: price,
+                      avance: avance,
+                      reste: reste,
+                      status: status,
+                      paid: avance > 0,
+                    };
+
+                    await axiosClient.post(
+                      "/comptable/create-paiement-service",
+                      paiementServiceData
+                    );
+                  }
+                }
               }
+              // } catch (error) {
+              //   console.error("Error creating payment:", error);
+              // }
+
+              console.log(
+                "eleve_id, ",
+                eleve.id,
+                ", totalAvance, ",
+                totalAvance
+              );
             }
-          }
+          });
 
-          // goToHomePage();
-
-          // Payment and paiement_service entries created successfully
-          // console.log("Payment created:", response.data);
           $toast.success("Payment created successfully!", {
             position: "bottom-right",
             duration: 3000,
           });
 
-          // this.$router.push({ name: 'CreatePaiement' });
-          
+          this.fetchElevesForGroupe(this.selectedGroupe.id);
 
+          this.avance = "0.00";
+          this.reste = "0.00";
+          this.modePaiement = "";
+          this.referenceNumber = "";
+          this.selectedPaymentMethods = [];
+          this.paymentMethodPrices = {};
+          // eleve.selectedMonths = [];
+          // eleve.selectedFraisInscription = "";
         } catch (error) {
-          // console.error("Error creating payment:", error);
-          $toast.error("An error occurred", {
-            position: "bottom-right",
-            duration: 3000,
+          console.error("Error creating payment:", error);
+        }
+      }
+
+      if (this.selectedEleve) {
+        // Calculate the total avance for the payment
+        let totalAvance = parseFloat(this.avance);
+
+        if (this.selectedEleve.selectedCredit) {
+          let originalTotalAvance = totalAvance; // Store the original totalAvance value
+
+          const sortedPaiements = this.paiements.slice().sort((a, b) => {
+            return new Date(a.created_at) - new Date(b.created_at);
           });
+
+          for (const paiement of sortedPaiements) {
+            if (totalAvance <= 0) {
+              break;
+            }
+
+            if (paiement.status === "Not completed") {
+              // Calculate the remaining amount needed to complete this paiement
+              const remainingAmount = parseFloat(paiement.reste);
+
+              // Calculate the avance to be applied to this paiement
+              const avanceToApply = Math.min(totalAvance, remainingAmount);
+
+              // Update the paiement's avance and reste
+              paiement.avance = (
+                parseFloat(paiement.avance) + avanceToApply
+              ).toFixed(2);
+              paiement.reste = (remainingAmount - avanceToApply).toFixed(2);
+
+              // Update the paiement status to "Completed" if the reste becomes zero
+              if (paiement.reste <= 0) {
+                paiement.status = "Completed";
+              }
+
+              await axiosClient.put(
+                `/comptable/update-payment/${paiement.id}`,
+                {
+                  avance: paiement.avance,
+                  reste: paiement.reste,
+                  status: paiement.status,
+                }
+              );
+
+              $toast.success("Payment updated successfully!", {
+                position: "bottom-right",
+                duration: 3000,
+              });
+
+              totalAvance -= avanceToApply;
+            }
+          }
+
+          const sortedServices = this.selectedEleve.services
+            .slice()
+            .sort((a, b) => {
+              const priorityOrder = [
+                "Frais d'inscription",
+                "Frais scolarité",
+                "Transport",
+              ];
+
+              return (
+                priorityOrder.indexOf(a.service) -
+                priorityOrder.indexOf(b.service)
+              );
+            });
+
+          for (const paiement of sortedPaiements) {
+            console.log("originalTotalAvance, ", originalTotalAvance);
+            if (originalTotalAvance <= 0) {
+              break; // No more credit to distribute
+            }
+
+            for (const paiementService of paiement.services) {
+              if (paiementService.pivot.status === "Not Completed") {
+                const remainingServiceAmount = parseFloat(
+                  paiementService.pivot.reste
+                );
+
+                const avanceToApplyToService = Math.min(
+                  originalTotalAvance,
+                  remainingServiceAmount
+                );
+
+                paiementService.pivot.avance = (
+                  parseFloat(paiementService.pivot.avance) +
+                  avanceToApplyToService
+                ).toFixed(2);
+                paiementService.pivot.reste = (
+                  remainingServiceAmount - avanceToApplyToService
+                ).toFixed(2);
+
+                if (paiementService.pivot.reste <= 0) {
+                  paiementService.pivot.status = "Completed";
+                }
+
+                await axiosClient.put(
+                  `/comptable/paiementService/${paiementService.pivot.id}`,
+                  {
+                    avance: paiementService.pivot.avance,
+                    reste: paiementService.pivot.reste,
+                    status: paiementService.pivot.status,
+                  }
+                );
+
+                // Reduce the original total avance by the amount applied to this service paiement
+                originalTotalAvance -= avanceToApplyToService;
+
+                this.$router.push({ name: "CreatePaiement" });
+              }
+            }
+          }
+        }
+
+        if (totalAvance > 0) {
+          // Calculate the avance distribution based on the priority
+          const avanceDistribution = {};
+
+          let hasChequeMode = false;
+          for (const method of this.selectedPaymentMethods) {
+            if (method === "Chèque") {
+              hasChequeMode = true;
+              break;
+            }
+          }
+
+          // Create a new payment entry in the paiement table
+          const paymentData = {
+            montant: this.totalAmount,
+            avance: this.avance,
+            reste: this.reste,
+            mode: this.modePaiement,
+            num_cheque: this.referenceNumber,
+            status: this.reste > 0 ? "Not completed" : "completed",
+            pending: hasChequeMode,
+            eleve_id: this.selectedEleve.id,
+          };
+
+          try {
+            const response = await axiosClient.post(
+              "/comptable/create-paiement",
+              paymentData
+            );
+
+            if (response.status === 201) {
+              $toast.success("Payment created successfully!", {
+                position: "bottom-right",
+                duration: 3000,
+              });
+            }
+
+            const paiementId = response.data.id; // Get the created paiement_id
+
+            // console.log("paiementId, ", paiementId);
+
+            // Create entries in modes table for selected payment methods
+            for (const selectedPaymentMethod of this.selectedPaymentMethods) {
+              const price = this.paymentMethodPrices[selectedPaymentMethod];
+              if (price > 0) {
+                const modeData = {
+                  type: selectedPaymentMethod, // Assuming selectedPaymentMethod is "Espèce", "Chèque", or "TPE"
+                  montant: price,
+                  paid: selectedPaymentMethod === "Chèque" ? false : true, // You might need to adjust this based on your logic
+                  ref:
+                    selectedPaymentMethod === "Chèque"
+                      ? this.referenceNumber
+                      : null,
+                  paiement_id: paiementId,
+                };
+
+                await axiosClient.post("/comptable/create-mode", modeData);
+              }
+            }
+
+            console.log("paiementId, ", this.selectedEleve.selectedMonths);
+            // Create entries in paiement_service table based on selected services and months
+            for (const month of this.selectedEleve.selectedMonths) {
+              // Check if "Frais d'inscription" checkbox is selected and it's Sept month
+
+              console.log(this.selectedEleve.selectedFraisInscription);
+              if (
+                this.selectedEleve.selectedFraisInscription &&
+                month === "Sept"
+              ) {
+                const fraisInscriptionService =
+                  this.selectedEleve.services.find(
+                    (service) =>
+                      service.type === "annuel" &&
+                      service.service === "Frais d'inscription"
+                  );
+
+                console.log(
+                  "fraisInscriptionService, ",
+                  fraisInscriptionService
+                );
+
+                if (fraisInscriptionService) {
+                  const price = fraisInscriptionService.pivot.price;
+                  const avance = Math.min(totalAvance, price);
+                  const reste = price - avance;
+
+                  const status = reste > 0 ? "Not Completed" : "Completed";
+
+                  // console.log('fraisInscriptionService.id, ', fraisInscriptionService.id);
+
+                  const paiementServiceData = {
+                    paiement_id: paiementId,
+                    service_id: fraisInscriptionService.id,
+                    month: month,
+                    price: price,
+                    avance: avance,
+                    reste: reste,
+                    status: status,
+                    paid: avance > 0,
+                  };
+
+                  await axiosClient.post(
+                    "/comptable/create-paiement-service",
+                    paiementServiceData
+                  );
+
+                  totalAvance -= avance;
+                }
+              }
+
+              // Distribute avance on "Frais scolarité" service
+              const selectedFraisScolariteService =
+                this.selectedEleve.services.find(
+                  (service) =>
+                    service.type === "mensuel" &&
+                    service.service === "Frais scolarité"
+                );
+
+              if (selectedFraisScolariteService) {
+                const avance = Math.min(
+                  totalAvance,
+                  selectedFraisScolariteService.pivot.price
+                );
+                avanceDistribution[selectedFraisScolariteService.id] = avance;
+                totalAvance -= avance;
+              }
+
+              // Distribute avance on "Transport" service
+              const selectedTransportService = this.selectedEleve.services.find(
+                (service) =>
+                  service.type === "mensuel" && service.service === "Transport"
+              );
+
+              if (selectedTransportService) {
+                const avance = Math.min(
+                  totalAvance,
+                  selectedTransportService.pivot.price
+                );
+                avanceDistribution[selectedTransportService.id] = avance;
+                totalAvance -= avance;
+              }
+
+              // Create entries in paiement_service table for selected services and month
+              for (const service of this.selectedEleve.services) {
+                if (
+                  avanceDistribution.hasOwnProperty(service.id) ||
+                  (service.type === "mensuel" &&
+                    (service.service === "Frais scolarité" ||
+                      service.service === "Transport"))
+                ) {
+                  const price = service.pivot.price;
+                  const avance = avanceDistribution[service.id] || 0;
+                  const reste = price - avance;
+
+                  const status = reste > 0 ? "Not Completed" : "Completed";
+
+                  const paiementServiceData = {
+                    paiement_id: paiementId,
+                    service_id: service.id,
+                    month: month,
+                    price: price,
+                    avance: avance,
+                    reste: reste,
+                    status: status,
+                    paid: avance > 0,
+                  };
+
+                  await axiosClient.post(
+                    "/comptable/create-paiement-service",
+                    paiementServiceData
+                  );
+                }
+              }
+            }
+
+            // goToHomePage();
+
+            // Payment and paiement_service entries created successfully
+            // console.log("Payment created:", response.data);
+            $toast.success("Payment created successfully!", {
+              position: "bottom-right",
+              duration: 3000,
+            });
+
+            await this.fetchServicesForEleve();
+            await this.fetchPaiementsWithServices();
+
+            this.avance = "0.00";
+            this.reste = "0.00";
+            this.modePaiement = "";
+            this.referenceNumber = "";
+            this.selectedPaymentMethods = [];
+            this.paymentMethodPrices = {};
+            this.selectedEleve.selectedMonths = [];
+            this.selectedEleve.selectedFraisInscription = "";
+
+            // this.$router.push({ name: 'CreatePaiement' });
+          } catch (error) {
+            // console.error("Error creating payment:", error);
+            $toast.error("An error occurred", {
+              position: "bottom-right",
+              duration: 3000,
+            });
+          }
         }
       }
     },
@@ -840,12 +1176,19 @@ export default {
 
         // console.log("this.paiements, ", this.paiements);
 
+        for(const month of this.months){
+          this.getRestePriceMonth(month)
+        }
+
         for (const paiement of this.paiements) {
           if (
             paiement.status === "Not completed" &&
             paiement.services &&
             paiement.services.length > 0
           ) {
+
+            console.log("paiement when fetching, ", paiement);
+
             let fraisInscriptionService = paiement.services.find(
               (service) => service.service === "Frais d'inscription"
             );
@@ -872,33 +1215,58 @@ export default {
       }
     },
 
-    isFraisInscriptionExisting() {
-      for (const paiement of this.paiements) {
-        for (const paiementService of paiement.services) {
-          // console.log('paiementService.service, ', paiementService.service);
+    isFraisInscriptionExisting(eleve = "") {
+      if (this.selectedEleve) {
+        for (const paiement of this.paiements) {
+          for (const paiementService of paiement.services) {
+            // console.log('paiementService.service, ', paiementService.service);
 
-          if (
-            paiementService.type === "annuel" &&
-            paiementService.service === "Frais d'inscription"
-          ) {
-            return true;
+            if (
+              paiementService.type === "annuel" &&
+              paiementService.service === "Frais d'inscription"
+            ) {
+              return true;
+            }
+          }
+        }
+      } else if (this.selectedGroupe) {
+        for (const paiement of eleve.paiements) {
+          for (const paiementService of paiement.services) {
+            // console.log('paiementService.service, ', paiementService.service);
+
+            if (
+              paiementService.type === "annuel" &&
+              paiementService.service === "Frais d'inscription"
+            ) {
+              return true;
+            }
           }
         }
       }
       return false;
     },
 
-    isMonthExisting(month) {
+    isMonthExisting(month, eleve = "") {
       // Iterate through the paiement_service data associated with each paiement
-      for (const paiement of this.paiements) {
-        for (const paiementService of paiement.services) {
-          if (paiementService.pivot.month === month) {
-            // console.log(
-            //   "paiementService.pivot.month, ",
-            //   paiementService.pivot.month,
-            // );
+      if (this.selectedEleve) {
+        for (const paiement of this.paiements) {
+          for (const paiementService of paiement.services) {
+            if (paiementService.pivot.month === month) {
+              // console.log(
+              //   "paiementService.pivot.month, ",
+              //   paiementService.pivot.month,
+              // );
 
-            return true;
+              return true;
+            }
+          }
+        }
+      } else if (this.selectedGroupe) {
+        for (const paiement of eleve.paiements) {
+          for (const paiementService of paiement.services) {
+            if (paiementService.pivot.month === month) {
+              return true;
+            }
           }
         }
       }
@@ -924,46 +1292,84 @@ export default {
       }
     },
 
-    // selectGroupe(groupe) {
-    //   this.selectedGroupe = groupe;
-    //   this.selectedEleve = null; // Clear selected eleve
-    //   this.fetchElevesForGroupe(groupe.id); // Fetch eleves for the selected groupe
-    // },
+    selectGroupe(groupe) {
+      this.loadingData = true;
+      this.selectedGroupe = groupe;
+      this.filteredGroupes = [];
+      this.selectedGroupeName = `${groupe.prenom} ${groupe.nom}`;
+      this.selectedEleve = null;
+      this.isEleveSelected = false;
+      this.selectedEleveName = "";
+      this.isDropdownOpen = true;
+      this.fetchElevesForGroupe(groupe.id);
+    },
 
-    // filterGroupes() {
-    //   if (!this.selectedGroupeName) {
-    //     this.filteredGroupes = [];
-    //     return;
-    //   }
+    async selectEleve(eleve) {
+      this.selectedEleve = {
+        ...eleve,
+        selectedMonths: [],
+        services: [], // Initialize services array for the selected eleve
+      };
+      this.selectedEleveName = `${eleve.prenom} ${eleve.nom}`;
+      this.filteredEleves = [];
+      this.selectedGroupe = null;
+      this.selectedGroupeName = "";
+      await this.fetchServicesForEleve();
+      await this.fetchPaiementsWithServices();
+      this.isEleveSelected = true;
+      this.isDropdownOpen = true;
+    },
 
-    //   // Filter the famille results based on the search input
-    //   this.filteredGroupes = this.familles.filter((famille) =>
-    //     famille.nom_complet
-    //       .toLowerCase()
-    //       .includes(this.selectedGroupeName.toLowerCase()),
-    //   );
-    // },
+    filterGroupes() {
+      if (!this.selectedGroupeName) {
+        this.filteredGroupes = [];
+        return;
+      }
 
-    // async fetchElevesForGroupe(groupeId) {
-    //   try {
-    //     const response = await axiosClient.get(
-    //       `/comptable/parents/${groupeId}/eleves`,
-    //     );
-    //     this.selectedGroupe.eleves = response.data;
-    //     // Fetch paiements for each eleve
-    //     for (const eleve of this.selectedGroupe.eleves) {
-    //       await this.fetchPaiementsForEleve(eleve);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error loading eleves for groupe:", error);
-    //   }
-    // },
+      // Filter the famille results based on the search input
+      this.filteredGroupes = this.familles.filter((famille) =>
+        famille.nom_complet
+          .toLowerCase()
+          .includes(this.selectedGroupeName.toLowerCase())
+      );
+    },
+
+    async fetchElevesForGroupe(groupeId) {
+      try {
+        const response = await axiosClient.get(
+          `/comptable/parents/${groupeId}/eleves`
+        );
+        this.selectedGroupe.eleves = response.data;
+
+        // console.log("this.selectedGroupe.eleves, ", this.selectedGroupe.eleves);
+        // Fetch paiements for each eleve
+        for (const eleve of this.selectedGroupe.eleves) {
+          console.log("eleve, ", eleve);
+
+          this.eleveSelectedMonths[eleve.id] = [];
+
+          await this.fetchPaiementsForEleve(eleve);
+
+          await this.fetchServicesForEleve(eleve);
+
+          // console.log("response, ", eleve.paiements[0].services);
+        }
+
+        this.loadingData = false;
+      } catch (error) {
+        console.error("Error loading eleves for groupe:", error);
+        this.loadingData = false;
+      }
+    },
 
     async fetchPaiementsForEleve(eleve) {
       try {
         const response = await axiosClient.get(
           `/comptable/paiements/${eleve.id}`
         );
+
+        // console.log('response, ', response);
+
         eleve.paiements = response.data;
 
         // console.log('eleve.paiements, ', eleve.paiements);
@@ -986,65 +1392,97 @@ export default {
       );
     },
 
-    async selectEleve(eleve) {
-      this.selectedEleve = {
-        ...eleve,
-        selectedMonths: [],
-        services: [], // Initialize services array for the selected eleve
-      };
-      this.selectedEleveName = `${eleve.prenom} ${eleve.nom}`;
-      this.filteredEleves = [];
-      await this.fetchServicesForEleve();
-      await this.fetchPaiementsWithServices();
-      this.isEleveSelected = true;
-      this.isDropdownOpen = true;
-    },
+    // async fetchServicesForEleveGroup(eleve) {
+    //   try {
+    //     const response = await axiosClient.get(
+    //       `/comptable/eleves/${eleve.id}/services`
+    //     );
+    //     eleve.services = response.data;
+    //     // this.calculateTotalPrice();
+    //     // this.calculateFraisInscriptionPrice();
+    //   } catch (error) {
+    //     console.error("Error loading services:", error);
+    //   }
+    // },
 
-    async fetchServicesForEleve() {
+    async fetchServicesForEleve(eleve = this.selectedEleve) {
       try {
         const response = await axiosClient.get(
-          `/comptable/eleves/${this.selectedEleve.id}/services`
+          `/comptable/eleves/${eleve.id}/services`
         );
-        this.selectedEleve.services = response.data;
-        this.calculateTotalPrice();
-        this.calculateFraisInscriptionPrice();
+        eleve.services = response.data;
+        this.calculateTotalPrice(eleve);
+        this.calculateFraisInscriptionPrice(eleve);
       } catch (error) {
         console.error("Error loading services:", error);
       }
     },
 
-    calculateFraisInscriptionPrice() {
-      const fraisInscriptionService = this.selectedEleve.services.find(
-        (service) =>
-          service.type === "annuel" && service.service === "Frais d'inscription"
-      );
-
-      // console.log("fraisInscriptionService, ", fraisInscriptionService);
-
-      // getResteFraisInscription()
-
-      if (fraisInscriptionService) {
-        this.fraisInscriptionPrice = parseFloat(
-          fraisInscriptionService.pivot.price
+    calculateFraisInscriptionPrice(eleve = "") {
+      if (this.selectedEleve) {
+        const fraisInscriptionService = this.selectedEleve.services.find(
+          (service) =>
+            service.type === "annuel" &&
+            service.service === "Frais d'inscription"
         );
-      } else {
-        this.fraisInscriptionPrice = 0;
+
+        // console.log("fraisInscriptionService, ", fraisInscriptionService);
+
+        // getResteFraisInscription()
+
+        if (fraisInscriptionService) {
+          this.fraisInscriptionPrice = parseFloat(
+            fraisInscriptionService.pivot.price
+          );
+        } else {
+          this.fraisInscriptionPrice = 0;
+        }
+      } else if (this.selectedGroupe && eleve) {
+        const fraisInscriptionService = eleve.services.find(
+          (service) =>
+            service.type === "annuel" &&
+            service.service === "Frais d'inscription"
+        );
+
+        // console.log("fraisInscriptionService, ", fraisInscriptionService);
+
+        // getResteFraisInscription()
+
+        if (fraisInscriptionService) {
+          this.fraisInscriptionPriceEleve[eleve.id] = parseFloat(
+            fraisInscriptionService.pivot.price
+          );
+        } else {
+          this.fraisInscriptionPriceEleve[eleve.id] = 0;
+        }
       }
     },
 
     getRestePriceMonth(month) {
+      // if (this.selectedEleve) {
+
+        let totalPrice = 0;
+
+
       for (const paiement of this.paiements) {
+        // console.log("All paiements, ", paiement);
+
+
+
         if (
           paiement.status === "Not completed" &&
           paiement.services &&
           paiement.services.length > 0
         ) {
+
+          
+
+
           const mensuelServices = paiement.services.filter(
             (service) =>
               service.type === "mensuel" && service.pivot.month === month
           );
 
-          let totalPrice = 0;
 
           // console.log("this.selectedEleve[month], ", this.selectedEleve[month]);
 
@@ -1054,59 +1492,144 @@ export default {
 
           // console.log('mensuelServices, ', this.isMonthExisting(month));
 
+
+          // console.log("mensuelServices, ", mensuelServices);
           // let totarRest = 0;
-          mensuelServices.forEach((service) => {
-            if (service.pivot.month)
-              totalPrice += parseFloat(service.pivot.reste);
-            // totalReste += parseFloat(service.pivot.reste)
-          });
+          // mensuelServices.forEach((service) => {
+          //   // console.log("service, ", service);
+          //   if (service.pivot.month)
+          //     totalPrice += parseFloat(service.pivot.reste);
+          // });
 
-          console.log(this.selectedEleve.selectedMonths);
+          for(const service of mensuelServices){
+            totalPrice += parseFloat(service.pivot.reste);
+            // console.log("service, ", service, ", totalPrice", totalPrice);
 
-          if (this.isMonthExisting(month) && totalPrice === 0) return this.selectedEleve[month];
+          }
+
+          this.resteMesualService[month] = totalPrice
+
+          // console.log("month, ", month, ", totalPrice, ", totalPrice);
+
+          // if (this.isMonthExisting(month) && totalPrice === 0)
+          //   return this.selectedEleve[month];
 
           // console.log('mensuelServices, ', totalPrice);
 
           // this.selectedEleve.totalPrice = totalPrice;
 
-          return totalPrice;
+          // return totalPrice;
 
           // this.months.forEach((month) => {
           //   this.selectedEleve[month] = totalPrice;
           // });
+        }
+         else {
+          this.resteMesualService[month] = 0
+        }
+      }
+      // }
+      // if (this.selectedGroupe) {
+      //   for (const paiement of eleve.paiements) {
+      //     if (
+      //       paiement.status === "Not completed" &&
+      //       paiement.services &&
+      //       paiement.services.length > 0
+      //     ) {
+      //       const mensuelServices = paiement.services.filter(
+      //         (service) =>
+      //           service.type === "mensuel" && service.pivot.month === month
+      //       );
+
+      //       let totalPrice = 0;
+
+      //       // console.log("this.selectedEleve[month], ", this.selectedEleve[month]);
+
+      //       // if(mensuelServices === []){
+      //       //   return this.selectedEleve[month]
+      //       // }
+
+      //       // console.log('mensuelServices, ', this.isMonthExisting(month));
+
+      //       // let totarRest = 0;
+      //       mensuelServices.forEach((service) => {
+      //         if (service.pivot.month)
+      //           totalPrice += parseFloat(service.pivot.reste);
+      //         // totalReste += parseFloat(service.pivot.reste)
+      //       });
+
+      //       // console.log(this.selectedEleve.selectedMonths);
+
+      //       if (this.isMonthExisting(month) && totalPrice === 0)
+      //         return this.selectedEleve[month];
+
+      //       // console.log('mensuelServices, ', totalPrice);
+
+      //       // this.selectedEleve.totalPrice = totalPrice;
+
+      //       return totalPrice;
+
+      //       // this.months.forEach((month) => {
+      //       //   this.selectedEleve[month] = totalPrice;
+      //       // });
+      //     } else {
+      //       return 0;
+      //     }
+      //   }
+      // }
+    },
+
+    calculateTotalPrice(eleve = "") {
+      if (this.selectedEleve) {
+        if (
+          this.selectedEleve.services &&
+          this.selectedEleve.services.length > 0
+        ) {
+          const mensuelServices = this.selectedEleve.services.filter(
+            (service) => service.type === "mensuel"
+          );
+          let totalPrice = 0;
+
+          // let totarRest = 0;
+          mensuelServices.forEach((service) => {
+            totalPrice += parseFloat(service.pivot.price);
+          });
+          this.selectedEleve.totalPrice = totalPrice;
+
+          this.months.forEach((month) => {
+            this.selectedEleve[month] = totalPrice;
+          });
         } else {
-          return 0;
+          this.selectedEleve.totalPrice = 0;
+        }
+      } else if (this.selectedGroupe) {
+        if (eleve.services && eleve.services.length > 0) {
+          const mensuelServices = eleve.services.filter(
+            (service) => service.type === "mensuel"
+          );
+          let totalPrice = 0;
+
+          // let totarRest = 0;
+          mensuelServices.forEach((service) => {
+            totalPrice += parseFloat(service.pivot.price);
+            // totalReste += parseFloat(service.pivot.reste)
+          });
+          eleve.totalPrice = totalPrice;
+
+          this.months.forEach((month) => {
+            eleve[month + `${eleve.id}`] = totalPrice;
+          });
+        } else {
+          eleve.totalPrice = 0;
         }
       }
     },
 
-    calculateTotalPrice() {
-      if (
-        this.selectedEleve.services &&
-        this.selectedEleve.services.length > 0
-      ) {
-        const mensuelServices = this.selectedEleve.services.filter(
-          (service) => service.type === "mensuel"
-        );
-        let totalPrice = 0;
+    getPriceForMonth(month, eleve = "") {
+      if (this.selectedEleve)
+        return this.selectedEleve ? this.selectedEleve[month] : "";
 
-        // let totarRest = 0;
-        mensuelServices.forEach((service) => {
-          totalPrice += parseFloat(service.pivot.price);
-          // totalReste += parseFloat(service.pivot.reste)
-        });
-        this.selectedEleve.totalPrice = totalPrice;
-
-        this.months.forEach((month) => {
-          this.selectedEleve[month] = totalPrice;
-        });
-      } else {
-        this.selectedEleve.totalPrice = 0;
-      }
-    },
-
-    getPriceForMonth(month) {
-      return this.selectedEleve ? this.selectedEleve[month] : "";
+      return eleve ? eleve[month + `${eleve.id}`] : "";
     },
 
     async loadEleves() {
@@ -1123,7 +1646,7 @@ export default {
     this.loadEleves();
     await this.fetchPaiementsWithServices();
     this.handleCreditCheckboxChange();
-    // await this.fetchFamilles();
+    await this.fetchFamilles();
   },
 };
 </script>

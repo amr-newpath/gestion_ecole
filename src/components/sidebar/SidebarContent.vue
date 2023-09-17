@@ -217,12 +217,12 @@ const isCurrentPath = (path) => {
         title="Gestion des services"
       />
 
-      <SidebarLink
+      <!-- <SidebarLink
         :to="{ name: 'ListClasses' }"
         :active="isCurrentRoute('ListClasses')"
         icon="ri:bus-line"
         title="Gestion du transport"
-      />
+      /> -->
 
 
       <SidebarLink
