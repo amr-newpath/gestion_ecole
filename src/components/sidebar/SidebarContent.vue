@@ -305,8 +305,8 @@ const isCurrentPath = (path) => {
     <template v-if="userRole === 'Eleve'">
       <SidebarLink
         title="Dashboard"
-        :to="{ name: 'EleveProfile' }"
-        :active="isCurrentRoute('EleveProfile')"
+        :to="{ name: 'EleveDashboard' }"
+        :active="isCurrentRoute('EleveDashboard')"
         icon="mdi:view-dashboard"
       />
 
@@ -321,7 +321,14 @@ const isCurrentPath = (path) => {
         :to="{ name: 'EleveSeances' }"
         :active="isCurrentRoute('EleveSeances')"
         icon="fluent-mdl2:publish-course"
-        title="Consulter des seances"
+        title="Consulter les seances"
+      />
+
+      <SidebarLink
+        :to="{ name: 'ProfsEleve' }"
+        :active="isCurrentRoute('ProfsEleve')"
+        icon="ph:chalkboard-teacher"
+        title="Consulter les profs"
       />
 
       <SidebarLink
@@ -343,8 +350,8 @@ const isCurrentPath = (path) => {
     <template v-if="userRole === 'Prof'">
       <SidebarLink
         title="Dashboard"
-        :to="{ name: 'ProfProfile' }"
-        :active="isCurrentRoute('ProfProfile')"
+        :to="{ name: 'ProfDashboard' }"
+        :active="isCurrentRoute('ProfDashboard')"
         icon="mdi:view-dashboard"
       />
 

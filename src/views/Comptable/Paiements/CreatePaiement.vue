@@ -248,9 +248,7 @@
                   {{ getPriceForMonth(month)
                   }}<span class="mx-2"
                     >DHs
-                    <span
-                      v-if="resteMesualService[month]"
-                      class="text-red-500"
+                    <span v-if="resteMesualService[month]" class="text-red-500"
                       >- (Reste: {{ resteMesualService[month] }})</span
                     >
                   </span>
@@ -595,11 +593,7 @@ export default {
       if (this.selectedGroupe) {
         try {
           let totalAvance = parseFloat(this.avance);
-
-          // console.log(
-          //   "this.selectedPaymentMethods, ",
-          //   this.selectedPaymentMethods
-          // );
+          let totalAmountGroup = this.totalAmount;
 
           const avanceDistribution = {};
 
@@ -612,14 +606,20 @@ export default {
           }
 
           this.selectedGroupe.eleves.forEach(async (eleve) => {
+            // The total amount for every eleve is the sum of all prices of selected months
+            // We have to solve the problem of totalAmount + avance and reste for every eleve
+
+
+            
+
+
             if (
               totalAvance > 0 &&
               (eleve.selectedFraisInscription ||
                 this.eleveSelectedMonths[eleve.id])
             ) {
-              // Create a new payment entry in the paiement table
               const paymentData = {
-                montant: this.totalAmount,
+                montant: this.totalAmount,  
                 avance: this.avance,
                 reste: this.reste,
                 mode: this.modePaiement,
@@ -637,7 +637,7 @@ export default {
 
               // debugger;
 
-              const paiementId = response.data.id; // Get the created paiement_id
+              const paiementId = response.data.id;
 
               // console.log("paymentId, ", paiementId);
 
@@ -648,9 +648,9 @@ export default {
 
                 if (price > 0) {
                   const modeData = {
-                    type: selectedPaymentMethod, // Assuming selectedPaymentMethod is "Espèce", "Chèque", or "TPE"
+                    type: selectedPaymentMethod,
                     montant: price,
-                    paid: selectedPaymentMethod === "Chèque" ? false : true, // You might need to adjust this based on your logic
+                    paid: selectedPaymentMethod === "Chèque" ? false : true,
                     ref:
                       selectedPaymentMethod === "Chèque"
                         ? this.referenceNumber
@@ -672,11 +672,8 @@ export default {
               // debugger;
 
               // console.log("paiementId, ", eleve.selectedMonths);
-              // Create entries in paiement_service table based on selected services and months
-              for (const month of this.eleveSelectedMonths[eleve.id]) {
-                // Check if "Frais d'inscription" checkbox is selected and it's Sept month
 
-                // console.log(eleve.selectedFraisInscription);
+              for (const month of this.eleveSelectedMonths[eleve.id]) {
                 if (eleve.selectedFraisInscription && month === "Sept") {
                   const fraisInscriptionService = eleve.services.find(
                     (service) =>
@@ -684,19 +681,12 @@ export default {
                       service.service === "Frais d'inscription"
                   );
 
-                  // console.log(
-                  //   "fraisInscriptionService, ",
-                  //   fraisInscriptionService
-                  // );
-
                   if (fraisInscriptionService) {
                     const price = fraisInscriptionService.pivot.price;
                     const avance = Math.min(totalAvance, price);
                     const reste = price - avance;
 
                     const status = reste > 0 ? "Not Completed" : "Completed";
-
-                    // console.log('fraisInscriptionService.id, ', fraisInscriptionService.id);
 
                     const paiementServiceData = {
                       paiement_id: paiementId,
@@ -709,6 +699,7 @@ export default {
                       paid: avance > 0,
                     };
 
+
                     await axiosClient.post(
                       "/comptable/create-paiement-service",
                       paiementServiceData
@@ -718,7 +709,6 @@ export default {
                   }
                 }
 
-                // Distribute avance on "Frais scolarité" service
                 const selectedFraisScolariteService = eleve.services.find(
                   (service) =>
                     service.type === "mensuel" &&
@@ -734,7 +724,6 @@ export default {
                   totalAvance -= avance;
                 }
 
-                // Distribute avance on "Transport" service
                 const selectedTransportService = eleve.services.find(
                   (service) =>
                     service.type === "mensuel" &&
@@ -750,7 +739,6 @@ export default {
                   totalAvance -= avance;
                 }
 
-                // Create entries in paiement_service table for selected services and month
                 for (const service of eleve.services) {
                   if (
                     avanceDistribution.hasOwnProperty(service.id) ||
@@ -816,11 +804,10 @@ export default {
       }
 
       if (this.selectedEleve) {
-        // Calculate the total avance for the payment
         let totalAvance = parseFloat(this.avance);
 
         if (this.selectedEleve.selectedCredit) {
-          let originalTotalAvance = totalAvance; // Store the original totalAvance value
+          let originalTotalAvance = totalAvance;
 
           const sortedPaiements = this.paiements.slice().sort((a, b) => {
             return new Date(a.created_at) - new Date(b.created_at);
@@ -832,19 +819,15 @@ export default {
             }
 
             if (paiement.status === "Not completed") {
-              // Calculate the remaining amount needed to complete this paiement
               const remainingAmount = parseFloat(paiement.reste);
 
-              // Calculate the avance to be applied to this paiement
               const avanceToApply = Math.min(totalAvance, remainingAmount);
 
-              // Update the paiement's avance and reste
               paiement.avance = (
                 parseFloat(paiement.avance) + avanceToApply
               ).toFixed(2);
               paiement.reste = (remainingAmount - avanceToApply).toFixed(2);
 
-              // Update the paiement status to "Completed" if the reste becomes zero
               if (paiement.reste <= 0) {
                 paiement.status = "Completed";
               }
@@ -885,7 +868,7 @@ export default {
           for (const paiement of sortedPaiements) {
             console.log("originalTotalAvance, ", originalTotalAvance);
             if (originalTotalAvance <= 0) {
-              break; // No more credit to distribute
+              break;
             }
 
             for (const paiementService of paiement.services) {
@@ -920,7 +903,6 @@ export default {
                   }
                 );
 
-                // Reduce the original total avance by the amount applied to this service paiement
                 originalTotalAvance -= avanceToApplyToService;
 
                 this.$router.push({ name: "CreatePaiement" });
@@ -930,7 +912,6 @@ export default {
         }
 
         if (totalAvance > 0) {
-          // Calculate the avance distribution based on the priority
           const avanceDistribution = {};
 
           let hasChequeMode = false;
@@ -941,7 +922,6 @@ export default {
             }
           }
 
-          // Create a new payment entry in the paiement table
           const paymentData = {
             montant: this.totalAmount,
             avance: this.avance,
@@ -966,18 +946,17 @@ export default {
               });
             }
 
-            const paiementId = response.data.id; // Get the created paiement_id
+            const paiementId = response.data.id;
 
             // console.log("paiementId, ", paiementId);
 
-            // Create entries in modes table for selected payment methods
             for (const selectedPaymentMethod of this.selectedPaymentMethods) {
               const price = this.paymentMethodPrices[selectedPaymentMethod];
               if (price > 0) {
                 const modeData = {
-                  type: selectedPaymentMethod, // Assuming selectedPaymentMethod is "Espèce", "Chèque", or "TPE"
+                  type: selectedPaymentMethod,
                   montant: price,
-                  paid: selectedPaymentMethod === "Chèque" ? false : true, // You might need to adjust this based on your logic
+                  paid: selectedPaymentMethod === "Chèque" ? false : true,
                   ref:
                     selectedPaymentMethod === "Chèque"
                       ? this.referenceNumber
@@ -990,10 +969,7 @@ export default {
             }
 
             console.log("paiementId, ", this.selectedEleve.selectedMonths);
-            // Create entries in paiement_service table based on selected services and months
             for (const month of this.selectedEleve.selectedMonths) {
-              // Check if "Frais d'inscription" checkbox is selected and it's Sept month
-
               console.log(this.selectedEleve.selectedFraisInscription);
               if (
                 this.selectedEleve.selectedFraisInscription &&
@@ -1040,7 +1016,6 @@ export default {
                 }
               }
 
-              // Distribute avance on "Frais scolarité" service
               const selectedFraisScolariteService =
                 this.selectedEleve.services.find(
                   (service) =>
@@ -1057,7 +1032,6 @@ export default {
                 totalAvance -= avance;
               }
 
-              // Distribute avance on "Transport" service
               const selectedTransportService = this.selectedEleve.services.find(
                 (service) =>
                   service.type === "mensuel" && service.service === "Transport"
@@ -1072,7 +1046,6 @@ export default {
                 totalAvance -= avance;
               }
 
-              // Create entries in paiement_service table for selected services and month
               for (const service of this.selectedEleve.services) {
                 if (
                   avanceDistribution.hasOwnProperty(service.id) ||
@@ -1176,8 +1149,8 @@ export default {
 
         // console.log("this.paiements, ", this.paiements);
 
-        for(const month of this.months){
-          this.getRestePriceMonth(month)
+        for (const month of this.months) {
+          this.getRestePriceMonth(month);
         }
 
         for (const paiement of this.paiements) {
@@ -1186,7 +1159,6 @@ export default {
             paiement.services &&
             paiement.services.length > 0
           ) {
-
             console.log("paiement when fetching, ", paiement);
 
             let fraisInscriptionService = paiement.services.find(
@@ -1286,7 +1258,7 @@ export default {
     async fetchFamilles() {
       try {
         const response = await axiosClient.get("/comptable/parents");
-        this.familles = response.data; // Assuming the API response is an array of famille objects
+        this.familles = response.data;
       } catch (error) {
         console.error("Error loading familles:", error);
       }
@@ -1308,7 +1280,7 @@ export default {
       this.selectedEleve = {
         ...eleve,
         selectedMonths: [],
-        services: [], // Initialize services array for the selected eleve
+        services: [],
       };
       this.selectedEleveName = `${eleve.prenom} ${eleve.nom}`;
       this.filteredEleves = [];
@@ -1326,7 +1298,6 @@ export default {
         return;
       }
 
-      // Filter the famille results based on the search input
       this.filteredGroupes = this.familles.filter((famille) =>
         famille.nom_complet
           .toLowerCase()
@@ -1342,7 +1313,6 @@ export default {
         this.selectedGroupe.eleves = response.data;
 
         // console.log("this.selectedGroupe.eleves, ", this.selectedGroupe.eleves);
-        // Fetch paiements for each eleve
         for (const eleve of this.selectedGroupe.eleves) {
           console.log("eleve, ", eleve);
 
@@ -1461,28 +1431,20 @@ export default {
     getRestePriceMonth(month) {
       // if (this.selectedEleve) {
 
-        let totalPrice = 0;
-
+      let totalPrice = 0;
 
       for (const paiement of this.paiements) {
         // console.log("All paiements, ", paiement);
-
-
 
         if (
           paiement.status === "Not completed" &&
           paiement.services &&
           paiement.services.length > 0
         ) {
-
-          
-
-
           const mensuelServices = paiement.services.filter(
             (service) =>
               service.type === "mensuel" && service.pivot.month === month
           );
-
 
           // console.log("this.selectedEleve[month], ", this.selectedEleve[month]);
 
@@ -1492,7 +1454,6 @@ export default {
 
           // console.log('mensuelServices, ', this.isMonthExisting(month));
 
-
           // console.log("mensuelServices, ", mensuelServices);
           // let totarRest = 0;
           // mensuelServices.forEach((service) => {
@@ -1501,13 +1462,12 @@ export default {
           //     totalPrice += parseFloat(service.pivot.reste);
           // });
 
-          for(const service of mensuelServices){
+          for (const service of mensuelServices) {
             totalPrice += parseFloat(service.pivot.reste);
             // console.log("service, ", service, ", totalPrice", totalPrice);
-
           }
 
-          this.resteMesualService[month] = totalPrice
+          this.resteMesualService[month] = totalPrice;
 
           // console.log("month, ", month, ", totalPrice, ", totalPrice);
 
@@ -1523,9 +1483,8 @@ export default {
           // this.months.forEach((month) => {
           //   this.selectedEleve[month] = totalPrice;
           // });
-        }
-         else {
-          this.resteMesualService[month] = 0
+        } else {
+          this.resteMesualService[month] = 0;
         }
       }
       // }

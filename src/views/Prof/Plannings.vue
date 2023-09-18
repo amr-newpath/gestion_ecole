@@ -46,6 +46,8 @@
       </div>
     </div>
 
+    <div class="course-container">
+
     <div class="flex mt-4">
       <div
         v-for="day in days"
@@ -82,6 +84,7 @@
         </div>
       </div>
     </div>
+  </div>
 
   </div>
 </template>
@@ -196,6 +199,11 @@ export default {
 </script>
 
 <style scoped>
+
+.course-container {
+  max-height: 600px; /* Adjust this value as needed */
+  overflow-y: auto;
+}
 
 .course-box:hover {
   transform: scale(1.03); 

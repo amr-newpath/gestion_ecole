@@ -145,7 +145,11 @@
       </div>
     </div>
 
-    <transition-group name="fade" tag="div" class="flex flex-col items-center justify-center">
+    <transition-group
+      name="fade"
+      tag="div"
+      class="flex flex-col items-center justify-center"
+    >
       <div
         v-for="seance in filteredSeances"
         :key="seance.id"

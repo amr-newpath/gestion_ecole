@@ -313,6 +313,11 @@ const routes = [
     meta: { requiresAuth: true, roles: ["Prof"] },
     children: [
       {
+        path: "/prof",
+        component: () => import("@/views/Prof/Dashboard.vue"),
+        name: "ProfDashboard",
+      },
+      {
         path: "plannings",
         component: () =>
           import("@/views/Prof/Plannings.vue"),
@@ -358,6 +363,11 @@ const routes = [
     meta: { requiresAuth: true, roles: ["Eleve"] },
     children: [
       {
+        path: "/eleve",
+        component: () => import("@/views/Eleve/Dashboard.vue"),
+        name: "EleveDashboard",
+      },
+      {
         path: "planning",
         component: () =>
           import("@/views/Eleve/Planning.vue"),
@@ -374,6 +384,12 @@ const routes = [
         component: import("@/views/Eleve/SeanceDetails.vue"),
         name: "seance-details",
         
+      },
+      {
+        path: "profs",
+        component: () =>
+          import("@/views/Eleve/Profs.vue"),
+        name: "ProfsEleve",
       },
       {
         path: "profile",

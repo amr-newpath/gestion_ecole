@@ -975,7 +975,7 @@ export default {
           selectedAnnualServices: this.selectedAnnualServices,
           customAnnualPrices: this.customAnnualPrices,
           selectedMonthlyServices: Array.from(this.selectedMonthlyServices),
-          customMonthlyPrices: this.customMonthlyPrices,
+          customMonthlyPrices: this.customMonthlyPrices,  
           // code: this.user.code,
           // nom: this.user.nom,
           // prenom: this.user.prenom

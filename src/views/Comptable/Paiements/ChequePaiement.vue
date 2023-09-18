@@ -169,7 +169,7 @@ export default {
     async pay(paiement) {
       try {
         await axiosClient.put(`/comptable/update-payment/${paiement.id}`, {
-          pending: false,
+          // pending: false,
           chequePaid: true, 
         });
 
