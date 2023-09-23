@@ -1,1 +1,0 @@
-import{_ as e,o,c as t,b as c}from"./index-8845255c.js";const s={},n=c("p",null,"Administratif Profile",-1),r=[n];function _(a,i){return o(),t("div",null,r)}const f=e(s,[["render",_]]);export{f as default};
