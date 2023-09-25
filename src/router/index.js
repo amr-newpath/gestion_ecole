@@ -382,7 +382,7 @@ const routes = [
       {
         path: "/seances/:id",
         component: import("@/views/Eleve/SeanceDetails.vue"),
-        name: "seance-details",
+        name: "eleve-seance-details",
         
       },
       {

@@ -72,6 +72,7 @@ const store = createStore({
       sessionStorage.setItem("api_token", userData.token);
       sessionStorage.setItem("userRole", userData.user.roleable_type.split('\\')[2]);
       sessionStorage.setItem("userName", userData.user.name);
+      sessionStorage.setItem("userId", userData.user.id);
     },
   },
   modules: {},

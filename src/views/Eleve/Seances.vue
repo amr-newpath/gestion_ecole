@@ -33,7 +33,7 @@
         @click="showSeanceDetails(seance)"
       >
         <router-link
-          :to="{ name: 'seance-details', params: { id: seance.id } }"
+          :to="{ name: 'eleve-seance-details', params: { id: seance.id } }"
         >
           <div class="mb-4 cursor-pointer">
             <p class="text-lg text-center font-semibold mb-4">
@@ -74,9 +74,19 @@ export default {
       matieres: [],
     };
   },
+  // mounted() {
+    
+  // },
   created() {
     this.fetchMatieres();
     this.fetchSeances();
+
+    window.Echo.private(
+      // "notification"
+      "notification." + sessionStorage.getItem("userId")
+    ).notification((notification) => {
+      console.log(notification);
+    });
   },
   computed: {
     showSeanceDetails(seance) {
