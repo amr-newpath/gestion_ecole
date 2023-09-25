@@ -177,35 +177,41 @@ function logout() {
           ></div>
         </Button>
         <div
-          v-if="isVisible"
-          class="absolute w-64 top-20 right-36 bg-white rounded-md shadow-xl z-20 transition-all transform origin-top"
+      v-if="isVisible"
+      class="absolute w-96 top-20 right-36 bg-white rounded-md shadow-xl z-20 transition-all transform origin-top"
+    >
+      <ul
+        class="overflow-y-auto max-h-96 transition-opacity duration-300"
+        :class="{
+          'h-0 opacity-0': !isVisible,
+          'h-auto opacity-100': isVisible,
+        }"
+      >
+        <li
+          v-for="(notification, index) in notifications"
+          :key="index"
+          class="relative group hover:bg-gray-100 hover:cursor-pointer transition-colors duration-200"
         >
-          <ul
-            class="overflow-y-auto max-h-96 transition-opacity duration-300"
-            :class="{
-              'h-0 opacity-0': !isVisible,
-              'h-auto opacity-100': isVisible,
-            }"
-          >
-            <li
-              v-for="(notification, index) in notifications"
-              :key="index"
-              class="relative group hover:bg-gray-100 hover:cursor-pointer transition-colors duration-200"
-            >
-              <div class="flex justify-between items-center px-4 py-2">
-                <div class="flex-grow truncate">
-                  {{ notification.data.seance_id }}
-                </div>
-                <div class="text-xs text-gray-500">
-                  {{ formatHumanDate(notification.created_at) }}
-                </div>
-              </div>
-              <div
-                class="absolute top-0 left-0 w-full h-full invisible group-hover:visible"
-              ></div>
-            </li>
-          </ul>
-        </div>
+          <div class="flex justify-between px-4 py-2">
+            <div class="w-3/4">
+              <div class="text-base font-medium text-gray-800">{{ notification.data.userName }}</div>
+              <div class="text-sm text-gray-800 mb-1">{{ notification.data.msg }}</div>
+              <!-- <div class="text-xs text-gray-500">
+                {{ formatHumanDate(notification.created_at) }}
+              </div> -->
+            </div>
+            <div class="w-1/4 text-right text-xs text-gray-500">
+              {{ formatHumanDate(notification.created_at) }}
+            </div>
+          </div>
+          <div
+            class="absolute top-0 left-0 w-full h-full invisible group-hover:visible"
+          ></div>
+          <hr />
+        </li>
+        
+      </ul>
+    </div>
 
         <Button
           iconOnly
