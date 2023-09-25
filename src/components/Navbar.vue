@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useFullscreen } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import {
@@ -20,7 +20,7 @@ const userRole = sessionStorage.getItem("userRole");
 
 const { isFullscreen, toggle: toggleFullScreen } = useFullscreen();
 
-onMounted(() => {
+onMounted(async () => {
   document.addEventListener("scroll", handleScroll);
 });
 
@@ -36,18 +36,72 @@ const router = useRouter();
 
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
+import axiosClient from "@/axios";
+import { formatDistanceToNow } from "date-fns";
 
 const $toast = useToast();
 
-// console.log(sessionStorage.getItem('userName'))
+const isVisible = ref(false);
+const notifications = ref([]);
+const unreadNotifications = ref(false);
+
+async function fetchNotifications() {
+  try {
+    const response = await axiosClient("/notifications");
+    notifications.value = response.data;
+
+    unreadNotifications.value = notifications.value.some(
+      (notification) => !notification.read_at
+    );
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+  }
+}
+
+async function markNotificationsAsRead() {
+  try {
+    await axiosClient.post("/notifications/mark-as-read");
+    unreadNotifications.value = false;
+  } catch (error) {
+    console.error("Error marking notifications as read:", error);
+  }
+}
+
+function toggleVisibility() {
+  isVisible.value = !isVisible.value;
+  if (isVisible.value && unreadNotifications.value) {
+    markNotificationsAsRead();
+  }
+}
+
+onMounted(() => {
+  fetchNotifications();
+
+  window.Echo.private(
+    // "notification"
+    "App.Models.User." + sessionStorage.getItem("userId")
+  ).notification((notification) => {
+    console.log(notification);
+    fetchNotifications();
+
+    $toast.info(`${notification.seance_id}`, {
+      position: "bottom-right",
+      duration: 3000,
+    });
+  });
+});
+
+function formatHumanDate(date) {
+  return formatDistanceToNow(new Date(date), { addSuffix: true });
+}
 
 function logout() {
   store.dispatch("logout").then(() => {
     router.push({ name: "Login" });
     $toast.success("You are logging out successfully!", {
-          position: "bottom-right",
-          duration: 3000,
-        });
+      position: "bottom-right",
+      duration: 3000,
+    });
   });
 }
 </script>
@@ -66,7 +120,8 @@ function logout() {
     >
       <div class="flex items-center gap-2">
         <p>
-          📌 {{ userRole }} | <span class="font-semibold">{{ userName.toUpperCase() }}</span>
+          📌 {{ userRole }} |
+          <span class="font-semibold">{{ userName.toUpperCase() }}</span>
         </p>
       </div>
       <div class="flex items-center gap-2">
@@ -94,34 +149,70 @@ function logout() {
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- <Button
+        <Button
           iconOnly
           variant="secondary"
-          @click="toggleDarkMode()"
-          v-slot="{ iconSizeClasses }"
-          class="hidden md:inline-flex"
-          srText="Toggle dark mode"
+          @click="toggleVisibility"
+          class="-mx-2 md:inline-flex"
+          srText="Notification"
         >
-          <Icon
-            icon="mdi:weather-night"
-            v-show="!isDark"
-            aria-hidden="true"
-            :class="iconSizeClasses"
-          />
-          <Icon
-            icon="mdi:white-balance-sunny"
-            v-show="isDark"
-            aria-hidden="true"
-            :class="iconSizeClasses"
-          />
-        </Button> -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6 text-gray-600"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+            />
+          </svg>
+
+          <div
+            class="absolute w-3 h-3 rounded-full bg-red-600 top-5 right-36"
+            v-if="unreadNotifications"
+          ></div>
+        </Button>
+        <div
+          v-if="isVisible"
+          class="absolute w-64 top-20 right-36 bg-white rounded-md shadow-xl z-20 transition-all transform origin-top"
+        >
+          <ul
+            class="overflow-y-auto max-h-96 transition-opacity duration-300"
+            :class="{
+              'h-0 opacity-0': !isVisible,
+              'h-auto opacity-100': isVisible,
+            }"
+          >
+            <li
+              v-for="(notification, index) in notifications"
+              :key="index"
+              class="relative group hover:bg-gray-100 hover:cursor-pointer transition-colors duration-200"
+            >
+              <div class="flex justify-between items-center px-4 py-2">
+                <div class="flex-grow truncate">
+                  {{ notification.data.seance_id }}
+                </div>
+                <div class="text-xs text-gray-500">
+                  {{ formatHumanDate(notification.created_at) }}
+                </div>
+              </div>
+              <div
+                class="absolute top-0 left-0 w-full h-full invisible group-hover:visible"
+              ></div>
+            </li>
+          </ul>
+        </div>
 
         <Button
           iconOnly
           variant="secondary"
           @click="toggleFullScreen"
           v-slot="{ iconSizeClasses }"
-          class="hidden md:inline-flex"
+          class="mx-4 hidden md:inline-flex"
           srText="Toggle dark mode"
         >
           <Icon

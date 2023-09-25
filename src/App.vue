@@ -3,6 +3,10 @@
 
 import { onMounted } from 'vue'
 import { gsap } from 'gsap'
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
+
+const $toast = useToast();
 
 onMounted(() => {
     gsap.to('#loading .logo', { y: -50, opacity: 0, duration: 0.5 })
@@ -21,6 +25,9 @@ onMounted(() => {
             document.getElementById('loading')?.remove()
         },
     })
+
+    
+
 })
 
 // import { mapState } from "vuex";

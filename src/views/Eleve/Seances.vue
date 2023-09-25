@@ -74,19 +74,28 @@ export default {
       matieres: [],
     };
   },
-  // mounted() {
-    
-  // },
+  mounted() {
+    // window.Echo.private(
+    //   // "notification"
+    //   "App.Models.User." + sessionStorage.getItem("userId")
+    // ).notification((notification) => {
+    //   $toast.success("Payment created successfully!", {
+    //         position: "bottom-right",
+    //         duration: 3000,
+    //       });
+    // });
+  },
   created() {
     this.fetchMatieres();
     this.fetchSeances();
 
-    window.Echo.private(
-      // "notification"
-      "notification." + sessionStorage.getItem("userId")
-    ).notification((notification) => {
-      console.log(notification);
-    });
+    // window.Echo.private(
+    //   // "notification"
+    //   "notification"
+    // ).notification((notification) => {
+    //   console.log(notification);
+    //   alert("notification, ", notification)
+    // });
   },
   computed: {
     showSeanceDetails(seance) {

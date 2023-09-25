@@ -28,7 +28,7 @@ window.Echo = new Echo({
   broadcaster: "pusher",
   key: import.meta.env.VITE_PUSHER_APP_KEY,
   cluster: 'eu',
-  encrypted: true,
+  // encrypted: true,
   // forceTLS: true,
   // wsHost: 'ws-eu-.pusher.com',
   // wsPort: 443,
@@ -42,24 +42,6 @@ window.Echo = new Echo({
 
 console.log("echo, ", window.Echo);
 
-window.Echo.private(
-  // "notification" 
-  "notification." + sessionStorage.getItem("userId")
-).notification((notification) => {
-  console.log(notification);
-});
-
-// window.Echo.private("notification." + sessionStorage.getItem("userId")).notification((notification) => {
-//   // Handle the received notification
-//   console.log(notification);
-//   // Update your UI or perform other actions
-// });
-
-// console.log(window.Echo.connector.pusher.config);
-
-// window.Echo.connector.pusher.config.auth.headers[
-//   "Authorization"
-// ] = `Bearer ${sessionStorage.getItem("api_token")}`;
 
 createApp(App)
   .use(store)
