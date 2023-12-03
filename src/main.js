@@ -32,7 +32,7 @@ window.Echo = new Echo({
   // forceTLS: true,
   // wsHost: 'ws-eu-.pusher.com',
   // wsPort: 443,
-  authEndpoint: "http://localhost:8000/broadcasting/auth",
+  authEndpoint: "http://indirewash.org/broadcasting/auth",
   auth: {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("api_token")}`, // Include the token in the headers

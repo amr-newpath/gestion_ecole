@@ -5,28 +5,29 @@ import { onMounted } from 'vue'
 import { gsap } from 'gsap'
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
+import axios from 'axios';
 
 const $toast = useToast();
 
-onMounted(() => {
-    gsap.to('#loading .logo', { y: -50, opacity: 0, duration: 0.5 })
-    gsap.to('#loading .left', {
-        rotateY: 45,
-        x: '-130%',
-        duration: 1,
-        delay: 0.6,
-    })
-    gsap.to('#loading .right', {
-        rotateY: -45,
-        x: '130%',
-        duration: 1,
-        delay: 0.6,
-        onComplete: () => {
-            document.getElementById('loading')?.remove()
-        },
-    })
+onMounted(async () => {
+  gsap.to('#loading .logo', { y: -50, opacity: 0, duration: 0.5 })
+  gsap.to('#loading .left', {
+    rotateY: 45,
+    x: '-130%',
+    duration: 1,
+    delay: 0.6,
+  })
+  gsap.to('#loading .right', {
+    rotateY: -45,
+    x: '130%',
+    duration: 1,
+    delay: 0.6,
+    onComplete: () => {
+      document.getElementById('loading')?.remove()
+    },
+  })
 
-    
+
 
 })
 

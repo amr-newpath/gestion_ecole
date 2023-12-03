@@ -15,6 +15,10 @@ defineProps({
         type: Boolean,
         default: false,
     },
+    test: {
+        type: Boolean,
+        default: false,
+    },
     title: {
         type: String,
         required: true,

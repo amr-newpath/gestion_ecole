@@ -55,6 +55,10 @@ function login(e) {
     })
     .catch((err) => {
       errorMsg.value = err.response.data.error;
+      $toast.warning("username or password field", {
+        position: "bottom-right",
+        duration: 3000,
+      });
     });
 }
 </script>
@@ -141,8 +145,7 @@ function login(e) {
         <router-link
           :to="{ name: 'Register' }"
           class="font-semibold leading-6 text-blue-600 hover:text-blue-500"
-          >Regiser for free</router-link
-        >
+          >Regiser for free</router-link>
       </p>
     </div>
   </div>

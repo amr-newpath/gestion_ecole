@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 // import Dashboard from "../views/Dashboard.vue";
 import Register from "../views/Register.vue";
 import Login from "../views/Login.vue";
+// import Login from "../views/Auth/Login.vue";
 // import DefaultLayout from "../components/DefaultLayout.vue";
 import AdminDashboard from "../views/Admin/Dashboard.vue";
 import EleveDashboard from "../views/Eleve//Dashboard.vue";
@@ -89,12 +90,19 @@ const routes = [
   //   // // children: [],
   // },
 
+  // {
+  //   path: "/login",
+  //   name: "Login",
+  //   component: Login,
+  //   // meta: { isGuest: true },
+  // },
   {
     path: "/login",
     name: "Login",
     component: Login,
     // meta: { isGuest: true },
   },
+
   {
     path: "/register",
     name: "Register",
@@ -210,10 +218,81 @@ const routes = [
         name: "HomeInscription",
       },
       {
+        path: "familles",
+        component: () =>
+          import("@/views/Administratif/Familles/ListFamilles.vue"),
+        name: "Familles",
+      },
+      {
+        path: "familles/:id/details",
+        component: () =>
+          import("@/views/Administratif/Familles/FamilleDetails.vue"),
+        name: "FamilleDetails",
+      },
+      {
         path: "inscriptions/creer-eleve",
         component: () =>
-          import("@/views/Administratif/Inscriptions/CreateInscription.vue"),
+          import("@/views/Administratif/Inscriptions/Home.vue"),
         name: "EleveInscription",
+      },
+      {
+        path: "inscriptions/add-famille",
+        component: () =>
+          import("@/views/Administratif/Inscriptions/AddFamille.vue"),
+        name: "AddFamilleInscription",
+      },
+      {
+        path: "inscriptions/add-famille/:id/parents",
+        component: () =>
+          import("@/views/Administratif/Inscriptions/Parent.vue"),
+        name: "ParentInscription",
+      },
+      {
+        path: "inscriptions/add-famille/:id/parents/add",
+        component: () =>
+          import("@/views/Administratif/Inscriptions/AddParent.vue"),
+        name: "AddParent",
+      },
+      {
+        path: "inscriptions/add-famille/:id/parents/:idP/edit",
+        component: () =>
+          import("@/views/Administratif/Inscriptions/EditParent.vue"),
+        name: "EditParent",
+      },
+      {
+        path: "inscriptions/add-famille/:id/eleves",
+        component: () =>
+          import("@/views/Administratif/Inscriptions/Eleves.vue"),
+        name: "ElevesInscription",
+      },
+      {
+        path: "inscriptions/add-famille/:id/eleves/add",
+        component: () =>
+          import("@/views/Administratif/Inscriptions/AddEleve.vue"),
+        name: "AddEleve",
+      },
+      {
+        path: "inscriptions/edit-famille/:id",
+        component: () =>
+          import("@/views/Administratif/Inscriptions/EditFamille.vue"),
+        name: "EditFamilleInscription",
+      },
+      {
+        path: "inscriptions/info-famille/:id/",
+        children: [
+          {
+            path: "",
+            component: () =>
+              import("@/views/Administratif/Inscriptions/MoreInfo.vue"),
+            name: "MoreInfoInscription",
+          },
+          {
+            path: "add-parent",
+            component: () =>
+              import("@/views/Administratif/Inscriptions/AddParent.vue"),
+            name: "AddParent",
+          },
+        ],
       },
       {
         path: "eleves/",
@@ -232,7 +311,66 @@ const routes = [
           import("@/views/Administratif/Services/ListServices.vue"),
         name: "ListServices",
       },
-      
+      {
+        path: "services/souscription",
+        component: () =>
+          import("@/views/Administratif/Services/ServiceSouscriptionComponent.vue"),
+        name: "souscriptions",
+      },
+      {
+        path: "payements/",
+        component: () =>
+          import("@/views/Administratif/Payements/ListPayements.vue"),
+        name: "Effectue-paiements",
+      },
+      {
+        path: "payements/Paiements-encours",
+        component: () =>
+          import("@/views/Administratif/Payements/ListPayementsEncours.vue"),
+        name: "Paiements-encours",
+      },
+      {
+        path: "payements/Paiements-enretard",
+        component: () =>
+          import("@/views/Administratif/Payements/ListPayementsEnretard.vue"),
+        name: "Paiements-enretard",
+      },
+      {
+        path: "payements/Paiements-avenir",
+        component: () =>
+          import("@/views/Administratif/Payements/ListPayementsAvenir.vue"),
+        name: "Paiements-avenir",
+      },
+      {
+        path: "payements/Paiements-apayer",
+        component: () =>
+          import("@/views/Administratif/Payements/ListPayementsApayer.vue"),
+        name: "Paiements-apayer",
+      },
+      {
+        path: "payements/Paiements-apartiel",
+        component: () =>
+          import("@/views/Administratif/Payements/ListPayementsApartiel.vue"),
+        name: "Paiements-apartiel",
+      },
+      {
+        path: "payements/Payees-enavances",
+        component: () =>
+          import("@/views/Administratif/Payements/ListPayeesEnavances.vue"),
+        name: "Payees-enavances",
+      },
+      {
+        path: "payements/Payees-atemps",
+        component: () =>
+          import("@/views/Administratif/Payements/ListPayeesAtemps.vue"),
+        name: "Payees-atemps",
+      },
+      {
+        path: "payements/Payees-aretards",
+        component: () =>
+          import("@/views/Administratif/Payements/ListPayeesAretard.vue"),
+        name: "Payees-aretards",
+      },
       {
         path: "plannings/",
         component: () =>
@@ -448,7 +586,7 @@ router.beforeEach((to, from, next) => {
   if (!to.matched.length) {
     next("/not-found");
   }
-
+});
   // const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   // const userRole = store.getters['userRole'];
 
@@ -473,6 +611,6 @@ router.beforeEach((to, from, next) => {
   // } else {
   //   next();
   // }
-});
+
 
 export default router;

@@ -1,674 +1,85 @@
 <template>
   <section class="py-1 bg-blueGray-50">
     <div class="w-full lg:w-8/12 px-4 mx-auto mt-6">
-      <div
-        class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0"
-      >
+      <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
         <div class="rounded-t bg-white mb-0 px-6 py-6">
           <div class="text-center flex justify-between">
-            <h6 class="text-blueGray-700 text-xl font-bold">My account</h6>
+            <h6 class="text-blueGray-700 text-xl font-bold">My Famille</h6>
           </div>
         </div>
         <div v-if="!showPrintStep" class="flex-auto px-4 lg:px-10 py-10 pt-0">
-          <!-- Step 1: Pere Information -->
-          <form v-if="step === 1">
-            <!-- Pere Information -->
-            <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
-              Pere Information
-            </h6>
-
-            <!-- Select Parent Option (Search Bar) -->
-            <!-- <div class="mb-3">
-              <label
-                class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                for="selectedParentDisplay"
-              >
-                Selected Parent
-              </label>
-              <input
-                id="selectedParentDisplay"
-                v-model="selectedParentName"
-                class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                :placeholder="user.pereNomDisabled ? '' : 'Select a parent...'"
-                :disabled="user.pereNomDisabled"
-              />
-            </div> -->
-
-            <!-- Select Parent Option (Search Bar) -->
-            <div class="relative w-full mb-8">
-              <input
-                id="parentSelect"
-                v-model="selectedParent"
-                @input="filterParents"
-                @focus="filteredParents = []"
-                class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Search parent..."
-              />
-              <ul
-                v-if="filteredParents.length"
-                class="absolute z-10 mt-1 w-full bg-white border border-blueGray-300 rounded-lg shadow-md"
-              >
-                <li
-                  v-for="parent in filteredParents"
-                  :key="parent.id"
-                  @click="selectParent(parent)"
-                  class="cursor-pointer px-4 py-2 hover:bg-blue-100"
-                >
-                  {{ parent.nom_complet }}
-                </li>
-              </ul>
-            </div>
-
-            <!-- Pere Form Fields -->
-            <div class="flex flex-wrap">
-              <!-- ... rest of the form fields ... -->
-
-              <!-- Nom -->
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="pereNom"
-                  >
-                    Nom
-                  </label>
-                  <input
-                    id="pereNom"
-                    type="text"
-                    placeholder="Nom"
-                    v-model="user.pereNom"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="pereNom"
-                  >
-                    Prenom
-                  </label>
-                  <input
-                    id="perePrenom"
-                    type="text"
-                    placeholder="Prenom"
-                    v-model="user.perePrenom"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="pereProfession"
-                  >
-                    Profession
-                  </label>
-                  <select
-                    id="pereProfession"
-                    v-model="user.pereProfession"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  >
-                    <option value="Enseignant">Enseignant</option>
-                    <option value="Ingénieur">Ingénieur</option>
-                    <option value="Médecin">Médecin</option>
-                    <option value="Dentiste">Dentiste</option>
-                    <option value="Architecte">Architecte</option>
-                    <option value="Chimiste">Chimiste</option>
-                    <option value="Avocat">Avocat</option>
-                    <option value="Comptable">Comptable</option>
-                    <option value="Notaire">Notaire</option>
-                    <option value="Urbaniste">Urbaniste</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="pereNat"
-                  >
-                    Nat
-                  </label>
-                  <select
-                    id="nat"
-                    v-model="user.pereNat"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  >
-                    <option
-                      v-for="nationality in nationalities"
-                      :key="nationality"
-                      :value="nationality"
-                    >
-                      {{ nationality }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="w-full lg:w-12/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="pereAdresse"
-                  >
-                    Adresse
-                  </label>
-                  <input
-                    id="pereAdresse"
-                    placeholder="Adresse"
-                    type="text"
-                    v-model="user.pereAdresse"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="pereEmail"
-                  >
-                    Email
-                  </label>
-                  <input
-                    id="pereEmail"
-                    type="text"
-                    placeholder="pere@example.com"
-                    v-model="user.pereEmail"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="pereTel"
-                  >
-                    Tel
-                  </label>
-                  <input
-                    id="pereTel"
-                    type="text"
-                    placeholder="Tel"
-                    v-model="user.pereTel"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-            </div>
-          </form>
-
-          <!-- Step 2: Eleve Information -->
-          <form v-if="step === 2" enctype="multipart/form-data">
-            <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
-              Eleve Information
-            </h6>
-
-            <div class="flex flex-wrap">
-              <!-- Image Upload -->
-              <div class="w-full lg:w-12/12 px-4">
-                <div class="relative w-full mb-8">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="image-upload"
-                  >
-                    Upload an Image
-                  </label>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    ref="imageInput"
-                    @change="handleImageUpload"
-                    style="display: none"
-                  />
-                  <div
-                    class="relative border-dashed border-2 border-blueGray-300 rounded-lg p-8 text-center"
-                  >
-                    <div class="mb-4">
-                      <svg
-                        class="mx-auto h-12 w-12 text-blueGray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 4v16m8-8H4"></path>
-                      </svg>
-                    </div>
-                    <p class="text-blueGray-600">
-                      Drag and drop an image here or
-                      <span
-                        class="text-indigo-500 cursor-pointer"
-                        @click="openImageUploader"
-                      >
-                        click to upload
-                      </span>
-                    </p>
-                  </div>
-                  <img
-                    v-if="user.image"
-                    :src="user.image"
-                    alt="Uploaded Image"
-                    style="max-width: 30%; height: auto"
-                    class="mt-4 mb-8 mx-auto"
-                  />
-                </div>
-              </div>
-
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="nom"
-                  >
-                    Nom
-                  </label>
-                  <input
-                    id="nom"
-                    placeholder="Nom"
-                    type="text"
-                    :value="user.pereNom"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="prenom"
-                  >
-                    Prénom
-                  </label>
-                  <input
-                    id="prenom"
-                    type="text"
-                    placeholder="Prenom"
-                    v-model="user.prenom"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="date-de-naissance"
-                  >
-                    Date de naissance
-                  </label>
-                  <input
-                    id="date-de-naissance"
-                    type="date"
-                    v-model="user.dateNaissance"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="sexe"
-                  >
-                    Sexe
-                  </label>
-                  <select
-                    id="sexe"
-                    v-model="user.sexe"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  >
-                    <!-- <option value="" disabled selected>Select</option> -->
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="nat"
-                  >
-                    Nat
-                  </label>
-                  <select
-                    id="nat"
-                    v-model="user.nat"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  >
-                    <option
-                      v-for="nationality in nationalities"
-                      :key="nationality"
-                      :value="nationality"
-                    >
-                      {{ nationality }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="adresse"
-                  >
-                    Adresse
-                  </label>
-                  <input
-                    id="adresse"
-                    type="text"
-                    placeholder="Adresse"
-                    v-model="user.pereAdresse"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="etablissement-pre"
-                  >
-                    Etablissement precedent
-                  </label>
-                  <input
-                    id="etablissement-pre"
-                    type="text"
-                    v-model="user.etablissementPre"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="annee-scolaire"
-                  >
-                    Année scolaire
-                  </label>
-                  <select
-                    id="annee-scolaire"
-                    v-model="user.anneeScolaire"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  >
-                    <option
-                      v-for="(year, index) in yearOptions"
-                      :key="index"
-                      :value="year"
-                    >
-                      {{ year }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="classe"
-                  >
-                    Classe
-                  </label>
-
-                  <select
-                    id="classe"
-                    v-model="user.classe_id"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  >
-                    <option
-                      v-for="classe in classes"
-                      :key="classe.id"
-                      :value="classe.id"
-                    >
-                      {{ classe.nom }}
-                    </option>
-                  </select>
-                  <!-- <input
-                    id="classe"
-                    type="text"
-                    v-model="user.classe"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  /> -->
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="situation-des-parents"
-                  >
-                    Situation des parents
-                  </label>
-                  <select
-                    id="situation-des-parents"
-                    v-model="user.situationParents"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  >
-                    <!-- <option value="" disabled selected>Select</option> -->
-
-                    <option value="Marié">Marié</option>
-                    <option value="Divorcé">Divorcé</option>
-                  </select>
-                </div>
-              </div>
-              <div class="w-full lg:w-6/12 px-4">
-                <div class="relative w-full mb-3">
-                  <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    for="niveau"
-                  >
-                    Niveau
-                  </label>
-
-                  <select
-                    id="niveau"
-                    v-model="user.niveau"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  >
-                    <!-- <option value="" disabled selected>Select</option> -->
-
-                    <option value="CA1">CA1</option>
-                    <option value="BAC">BAC</option>
-                    <option value="BAC2">BAC2</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </form>
-
-          <!-- Step 3: Services Information -->
-          <form v-if="step === 3">
-            <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
-              Services Information
-            </h6>
-            <!-- Annual Services -->
-            <div class="bg-white border rounded-lg shadow p-6 mb-4">
-              <h3 class="text-lg font-semibold mb-2">Annual Services</h3>
-              <div
-                v-for="service in annualServices"
-                :key="service.id"
-                class="mb-2"
-              >
-                <div class="flex items-center">
-                  <input
-                    type="checkbox"
-                    v-model="selectedAnnualServices"
-                    :value="service.id"
-                    class="mr-2"
-                  />
-                  <span class="flex items-center w-1/2">{{
-                    service.service
-                  }}</span>
-                  <!-- Input for custom annual price -->
-                  <input
-                    type="number"
-                    v-model="customAnnualPrices[service.id]"
-                    class="border rounded-md px-2 py-1 text-blueGray-600 focus:outline-none focus:ring focus:ring-blue-200"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- Monthly Services -->
-            <div class="bg-white border rounded-lg shadow p-6 mb-4">
-              <h3 class="text-lg font-semibold mb-2">Monthly Services</h3>
-              <div
-                v-for="service in monthlyServices"
-                :key="service.id"
-                class="mb-2"
-              >
-                <div class="flex items-center">
-                  <input
-                    type="checkbox"
-                    v-model="selectedMonthlyServices"
-                    :value="service.id"
-                    class="mr-2"
-                  />
-                  <span class="flex items-center w-1/2">{{
-                    service.service
-                  }}</span>
-                  <!-- Input for custom monthly price -->
-                  <input
-                    type="number"
-                    v-model="customMonthlyPrices[service.id]"
-                    @input="calculateTotalMonthlyBudget"
-                    class="border rounded-md px-2 py-1 text-blueGray-600 focus:outline-none focus:ring focus:ring-blue-200"
-                  />
-                </div>
-              </div>
-              <!-- Total monthly budget -->
-              <div class="flex items-center justify-between mt-12">
-                <span class="text-blueGray-600">Total budget mensuels:</span>
-                <span class="font-semibold">{{ totalMonthlyBudget }} DHs</span>
-              </div>
-            </div>
-          </form>
-
-          <!-- Step 4: Review Information -->
-          <div v-if="step === 4">
-            <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
-              Review Information
-            </h6>
-            <div class="space-y-6">
-              <!-- Eleve Information -->
-              <div class="bg-white border rounded-lg shadow p-6">
-                <h3 class="text-lg font-semibold mb-2">Eleve Information</h3>
-                <div class="space-y-2 text-sm">
-                  <p><strong>Nom:</strong> {{ user.pereNom }}</p>
-                  <p><strong>Prénom:</strong> {{ user.prenom }}</p>
-                  <!-- <p><strong>Code:</strong> {{ user.code }}</p> -->
-                  <p>
-                    <strong>Date de naissance:</strong> {{ user.dateNaissance }}
-                  </p>
-                  <p><strong>Sexe:</strong> {{ user.sexe }}</p>
-                  <p><strong>Nat:</strong> {{ user.nat }}</p>
-                  <p><strong>Adresse:</strong> {{ user.pereAdresse }}</p>
-                  <p>
-                    <strong>Etablissement pre:</strong>
-                    {{ user.etablissementPre }}
-                  </p>
-                  <p>
-                    <strong>Année scolaire:</strong> {{ user.anneeScolaire }}
-                  </p>
-                  <p><strong>Classe:</strong> {{ user.classe }}</p>
-                  <p>
-                    <strong>Situation des parents:</strong>
-                    {{ user.situationParents }}
-                  </p>
-                  <p><strong>Niveau:</strong> {{ user.niveau }}</p>
-                </div>
-              </div>
-
-              <!-- Pere Information -->
-              <div class="bg-white border rounded-lg shadow p-6">
-                <h3 class="text-lg font-semibold mb-2">Pere Information</h3>
-                <div class="space-y-2 text-sm">
-                  <p><strong>Nom:</strong> {{ user.pereNom }}</p>
-                  <p><strong>Prénom:</strong> {{ user.perePrenom }}</p>
-                  <!-- <p><strong>Code:</strong> {{ user.pereCode }}</p> -->
-                  <p><strong>Profession:</strong> {{ user.pereProfession }}</p>
-                  <p><strong>Nat:</strong> {{ user.pereNat }}</p>
-                  <!-- <p><strong>Qualité:</strong> {{ user.pereQualite }}</p> -->
-                  <p><strong>Email:</strong> {{ user.pereEmail }}</p>
-                  <p><strong>Tel:</strong> {{ user.pereTel }}</p>
-                  <!-- <p><strong>Civilité:</strong> {{ user.pereCivilite }}</p> -->
-                </div>
-              </div>
-
-              <!-- !! Mere Information -->
-              <!-- <div class="bg-white border rounded-lg shadow p-6">
-                <h3 class="text-lg font-semibold mb-2">Mere Information</h3>
-                <div class="space-y-2 text-sm">
-                  <p><strong>Nom:</strong> {{ user.mereNom }}</p>
-                  <p><strong>Prénom:</strong> {{ user.merePrenom }}</p>
-                  <p><strong>Code:</strong> {{ user.mereCode }}</p>
-                  <p><strong>Profession:</strong> {{ user.mereProfession }}</p>
-                  <p><strong>Nat:</strong> {{ user.mereNat }}</p>
-                  <p><strong>Qualité:</strong> {{ user.mereQualite }}</p>
-                  <p><strong>Email:</strong> {{ user.mereEmail }}</p>
-                  <p><strong>Tel:</strong> {{ user.mereTel }}</p>
-                  <p><strong>Civilité:</strong> {{ user.mereCivilite }}</p>
-                </div>
-              </div> -->
-            </div>
+          <div class="my-3">
+            <input id="selectedParentDisplay" v-model="selectedParentName"
+              class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+              :placeholder="user.pereNomDisabled ? '' : 'Select a Famille...'" :disabled="user.pereNomDisabled" />
           </div>
-
-          <div class="flex justify-end mt-6">
-            <button
-              v-if="step > 1"
-              @click="prevStep"
-              class="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 focus:outline-none focus:ring focus:ring-blue-200 transition duration-300"
-            >
-              Previous
-            </button>
-            <button
-              v-if="step < 4"
-              @click="nextStep"
-              class="ml-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 focus:outline-none focus:ring focus:ring-blue-200 transition duration-300"
-            >
-              Next
-            </button>
-            <button
-              v-if="step === 4"
-              @click="submitForm"
-              class="ml-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md py-2 px-4 focus:outline-none focus:ring focus:ring-green-200 transition duration-300"
-            >
-              Submit
-            </button>
+          <div class="overflow-x-auto">
+            <table class="table-auto w-full">
+              <thead>
+                <tr>
+                  <th class="px-4 py-2">Nom Famille</th>
+                  <th class="px-4 py-2">Nom Parent</th>
+                  <th class="px-4 py-2">Nom eleve</th>
+                  <th class="px-4 py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="px-4 py-2">
+                    <div class="flex items-center">
+                      <img class="rounded-full" src="../../../assets/images/avatar.jpg" width="30" height="30"
+                        alt="Avatar">
+                      <div class="ml-2 items-center">lahyani</div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-2">
+                    <div class="flex items-center">
+                      <img class="rounded-full" src="../../../assets/images/avatar.jpg" width="30" height="30"
+                        alt="Avatar">
+                      <div class="ml-2">lahyani</div>
+                    </div>
+                    <div class="flex items-center">
+                      <img class="rounded-full" src="../../../assets/images/avatar.jpg" width="30" height="30"
+                        alt="Avatar">
+                      <div class="ml-2">lahyani</div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-2">
+                    <div class="flex items-center">
+                      <img class="rounded-full" src="../../../assets/images/avatar.jpg" width="30" height="30"
+                        alt="Avatar">
+                      <div class="ml-2">lahyani</div>
+                    </div>
+                    <div class="flex items-center">
+                      <img class="rounded-full" src="../../../assets/images/avatar.jpg" width="30" height="30"
+                        alt="Avatar">
+                      <div class="ml-2">lahyani</div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-2">
+                    <div class="btn-group">
+                      <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring focus:ring-blue-200">more info</button>
+                      <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring focus:ring-blue-200">modifier</button>
+                      <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring focus:ring-blue-200">delete</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      <div
-        v-if="showPrintStep"
-        class="mt-8 p-6 border rounded-lg bg-white shadow"
-      >
+      <div v-if="showPrintStep" class="mt-8 p-6 border rounded-lg bg-white shadow">
         <h4 class="text-lg font-semibold mb-2">Form submitted successfully!</h4>
         <p class="text-gray-600 mb-4">Print the form if you want:</p>
-        <div class="flex space-x-4">
-          <button
-            @click="generatePDF"
-            class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md focus:outline-none focus:ring focus:ring-blue-200"
-          >
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+          <button @click="generatePDF"
+            class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md focus:outline-none focus:ring focus:ring-blue-200">
             Print PDF
           </button>
-          <button
-            @click="goToHomePage"
-            class="px-4 py-2 bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-md focus:outline-none focus:ring focus:ring-gray-200"
-          >
+          <button @click="goToHomePage"
+            class="px-4 py-2 bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-md focus:outline-none focus:ring focus:ring-gray-200">
             Go to Home
           </button>
         </div>
@@ -734,7 +145,7 @@ export default {
         pereCode: "",
         pereProfession: "Enseignant",
         pereNat: "Morocco",
-        pereAdresse: "",
+        pereAdresse: "ffff",
         pereSituation: "",
         pereQualite: "",
         pereEmail: "",
@@ -975,13 +386,13 @@ export default {
           selectedAnnualServices: this.selectedAnnualServices,
           customAnnualPrices: this.customAnnualPrices,
           selectedMonthlyServices: Array.from(this.selectedMonthlyServices),
-          customMonthlyPrices: this.customMonthlyPrices,  
+          customMonthlyPrices: this.customMonthlyPrices,
           // code: this.user.code,
           // nom: this.user.nom,
           // prenom: this.user.prenom
         };
 
-        // console.log("requestData, ", requestData);
+        console.log("requestData, ", requestData);
 
         const response = await axiosClient.post(
           "/administratif/inscription/create",
@@ -1124,7 +535,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.d1 {
+  display: flex;
+}
+</style>
 
 <!-- !! Step 3: Mere Information -->
 <!-- <form v-if="step === 3">
