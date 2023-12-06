@@ -25,7 +25,8 @@
 
                     <p uk-margin>
                         <a class="btn px-3 py-1 h-9 mt-1 rounded-lg text-dark-eval-3" style="background-color: #016563;"
-                            href="#modal-group-1" uk-toggle><i class="bi bi-person-plus-fill text-white"></i></a>
+                            href="#modal-group-1" @click="cleadData" uk-toggle><i
+                                class="bi bi-person-plus-fill text-white"></i></a>
                     </p>
 
                     <div id="modal-group-1" uk-modal>
@@ -251,12 +252,29 @@ export default {
         async update() {
             try {
                 const response = await axiosClient.put("/administratif/familles/" + this.famille_id, this.famille);
+                this.familles = this.familles.map((el) => {
+                    if (el.id === this.famille_id) {
+                        el = this.famille;
+                        return {
+                            ...el,
+                        };
+                    }
+                    return el;
+                });
                 this.famille_id = null;
-                this.getAllFamilles();
                 UIkit.modal('#modal-edit-Famille').hide();
             } catch (error) {
                 console.error("Error fetching parents:", error);
             }
+        },
+        cleadData() {
+            this.famille = {
+                nom: '',
+                situation: 'Marié',
+            },
+                this.famile_info = null;
+            this.id_famile = null;
+            this.famille_id = null;
         },
         cleanid() {
             this.id_famile = null;
@@ -269,6 +287,7 @@ export default {
             console.log(this.famille);
             try {
                 const response = await axiosClient.post("/administratif/familles", this.famille);
+                this.familles.push(response.data.data.famille);
                 this.famile_info = response.data.data.famille;
                 this.id_famile = response.data.data.famille.id;
                 this.famille = {
@@ -328,7 +347,50 @@ export default {
             }
         },
         delete(id) {
-            removeIteme(id, "Are you sure?", "/administratif/familles/", this.familles, this.getAllFamilles);
+            console.log("delete" + id);
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger",
+                },
+                buttonsStyling: false,
+            });
+
+            swalWithBootstrapButtons
+                .fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, delete it!",
+                    customClass: {
+                        confirmButton: "btn bg-danger  text-white",
+                        cancelButton: "btn bg-primary mr-5 text-white",
+                    },
+                    cancelButtonText: "No, cancel!",
+                    reverseButtons: true,
+                })
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            const res = await axiosClient.delete('/administratif/familles/' + id);
+                            this.familles = this.familles.filter((el) => el.id !== id);
+                            console.log(res.data);
+                        } catch (error) {
+                            console.error("Error fetching parents:", error);
+                        }
+                        swalWithBootstrapButtons
+                            .fire("Deleted!", "Your file has been deleted.", "success")
+                            .then((result) => {
+                                if (result.isConfirmed) {
+                                }
+                            });
+                    } else if (
+
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                    }
+                });
         }
     },
 

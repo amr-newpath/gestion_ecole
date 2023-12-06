@@ -23,7 +23,9 @@
                 <button class="uk-modal-close-default" type="button" uk-close></button>
                 <div class="rounded-t bg-white mb-0 px-6 py-3">
                     <div class="text-center flex justify-between uk-modal-header">
-                        <h6 class="text-blueGray-700 text-xl font-bold uk-modal-title">Ajouter Eleve</h6>
+                        <h6 class="text-blueGray-700 text-xl font-bold uk-modal-title" v-if="idEleve == 0 && idSante == 0">
+                            Ajouter Eleve</h6>
+                        <h6 class="text-blueGray-700 text-xl font-bold uk-modal-title" v-else>Edite Eleve</h6>
                     </div>
                 </div>
                 <form method="post" @submit.prevent="idEleve == 0 ? add : update"
@@ -59,8 +61,8 @@
                                 <label for="genre" class="block text-sm font-medium text-gray-600 mb-2">Genre</label>
                                 <select v-model="eleve.sexe"
                                     class="block w-full text-gray-900 border border-gray-300 rounded-lg bg-white-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                    <option value="femme">Femme</option>
-                                    <option value="homme">Homme</option>
+                                    <option value="F">F</option>
+                                    <option value="M">M</option>
                                 </select>
                             </div>
                         </div>
@@ -724,8 +726,11 @@
                             <div class="uk-modal-footer uk-text-right">
                                 <button class="uk-button uk-button-default uk-modal-close" type="button" id="btn2s"
                                     @click="prevoldd">prev</button>
-                                <button class="uk-button uk-button-default uk-modal-close mx-3" @click="save"
-                                    style="background-color: #005a70;" type="button" id="btn2s">save</button>
+                                <button type="button" @click.prevent="save" id="btn1s"
+                                    class="uk-button uk-button-primary mx-3"
+                                    v-if="idEleve == 0 && idSante == 0">Ajouter</button>
+                                <button type="button" @click.prevent="update(idEleve, idSante)" id="btn3s"
+                                    class="uk-button btn-warning mx-3" v-else>Mettre à jour</button>
                             </div>
                         </div>
                     </div>
@@ -783,7 +788,7 @@
 </template>
 <script>
 import axiosClient from "../../axios";
-import removeIteme from "../../GlobalFunctions";
+import Swal from "sweetalert2";
 import Pagination from '@/components/Pagination.vue'
 import { useToast } from "vue-toast-notification";
 const $toast = useToast();
@@ -837,7 +842,7 @@ export default {
                 date_naissance: null,
                 nat: "Morocco",
                 nationalite: "Morocco",
-                sexe: "homme",
+                sexe: "M",
                 etab_pre: null,
                 annee_scolaire: null,
                 niveau: null,
@@ -889,32 +894,15 @@ export default {
             ListNiveaux: ['PS', 'MS', 'GS', 'CP', 'CE1', 'CE2', 'CM1', 'CM2', '6ème'],
         }
     },
-    watch: {
-        // isChecked(value) {
-        //     if (!value) {
-        //         this.isCheckedOui = false;
-        //         this.isCheckedNon = false;
-        //     }
-        // },
-        // isCheckedm(value) {
-        //     if (!value) {
-        //         this.isCheckedOuim = false;
-        //         this.isCheckedNonm = false;
-        //     }
-        // }
-    },
     computed: {
         displayedItems() {
             const startIndex = (this.currentPage - 1) * this.itemsPerPage;
             const endIndex = startIndex + this.itemsPerPage;
             return this.eleves.slice(startIndex, endIndex);
         },
-        // isChecked() {
-        //     return this.isCheckedOui || this.isCheckedNon;
-        // }
+
     },
     mounted() {
-        // this.idFamille = localStorage.getItem('id_famile');
         this.idFamille = this.FamilleId;
         console.log(this.idFamille);
         this.getEleveFromFammilles();
@@ -991,12 +979,15 @@ export default {
             this.eleve.anciennete = 0;
             if (this.droix_image == "oui") {
                 this.eleve.droit_image = true;
+            } else {
+                this.eleve.droit_image = false;
             }
             try {
                 const response_eleve = await axiosClient.post(
                     "/administratif/elevess/createacount",
                     this.eleve
                 );
+                this.eleves.push(response_eleve.data.data.eleve);
                 this.save_sante(response_eleve.data.data.eleve.id);
                 UIkit.modal('#modal-group-4-4').hide();
                 var modal = UIkit.modal('#modal-group-2');
@@ -1004,7 +995,6 @@ export default {
                     modal.show();
                 }
                 this.vide();
-                this.getEleveFromFammilles();
                 $toast.success("créez une eleve avec succès !", {
                     position: "bottom-right",
                     duration: 3000,
@@ -1017,12 +1007,7 @@ export default {
                 });
             }
         },
-        // isChecked() {
-        //     return this.isCheckedOui || this.isCheckedNon;
-        // },
-        checks() {
-            console.log("hee");
-        },
+
         handlePageChange(page) {
             this.currentPage = page;
         },
@@ -1039,7 +1024,7 @@ export default {
                 date_naissance: null,
                 nat: "Morocco",
                 nationalite: "Morocco",
-                sexe: "homme",
+                sexe: "M",
                 etab_pre: null,
                 annee_scolaire: null,
                 niveau: null,
@@ -1176,13 +1161,13 @@ export default {
                     "/administratif/elevess/createacount",
                     this.eleve
                 );
+                this.eleves.push(this.eleve);
                 this.vide();
                 UIkit.modal('#modal-group-4').hide();
                 var modal = UIkit.modal('#modal-group-2');
                 if (modal) {
                     modal.show();
                 }
-                this.getEleveFromFammilles();
                 $toast.success("créez une eleve avec succès !", {
                     position: "bottom-right",
                     duration: 3000,
@@ -1197,162 +1182,211 @@ export default {
         },
         async edit(id) {
             this.idEleve = id;
+            console.log(this.idEleve);
             var modal = UIkit.modal('#modal-group-2');
             if (modal) {
                 modal.hide();
             }
+            await this.getEleve();
             UIkit.modal('#modal-group-4-1').show();
-            try {
-                const response = await axiosClient.get("/administratif/elevess/" + id);
-                this.eleve = response.data;
-                this.sante = this.eleve.santes[0];
-                this.idSante = this.eleve.santes[0].id;
-                if (this.sante.malade == 1) {
-                    this.ismalade = "oui";
-                } else {
-                    this.ismalade = "non";
-                }
-                if (this.sante.allergies == 1) {
-                    this.isALLERGIES = "oui";
-                } else {
-                    this.isALLERGIES = "non";
-                }
-                if (this.sante.asthme == 1) {
-                    ;
-                    this.isASTHME = "oui";
-                } else {
-                    this.isASTHME = "non";
-                }
-                if (this.sante.diabete == 1) {
-                    this.isDIABETE = "oui";
-                } else {
-                    this.isDIABETE = "non";
-                }
-                if (this.sante.traitement_regulier == 1) {
-                    this.istraitement = "oui";
-                } else {
-                    this.istraitement = "non";
-                }
-                if (this.sante.antecedents_medicaux_ch == 1) {
-                    this.isantecedents = "oui";
-                } else {
-                    this.isantecedents = "non";
-                }
-                if (this.sante.prb_vision == 1) {
-                    this.isvision = "oui";
-                } else {
-                    this.isvision = "non";
-                }
-                if (this.sante.prb_audition == 1) {
-                    this.isaudition = "oui";
-                } else {
-                    this.isaudition = "non";
-                }
-                if (this.sante.atteint == 1) {
-                    this.isatteint = "oui";
-                } else {
-                    this.isatteint = "non";
-                }
-                if (this.sante.dyscalculie == 1) {
-                    this.sante.dyscalculie = true;
-                } else {
-                    this.sante.dyscalculie = false;
-                }
-                if (this.sante.dysgraphie == 1) {
-                    this.sante.dysgraphie = true;
-                } else {
-                    this.sante.dysgraphie = false;
-                }
-                if (this.sante.dyslexie == 1) {
-                    this.sante.dyslexie = true;
-                } else {
-                    this.sante.dyslexie = false;
-                }
-                if (this.sante.dysorthographie == 1) {
-                    this.sante.dysorthographie = true;
-                } else {
-                    this.sante.dysorthographie = false;
-                }
-                if (this.sante.dysphasie == 1) {
-                    this.sante.dysphasie = true;
-                } else {
-                    this.sante.dysphasie = false;
-                }
-                if (this.sante.dyspraxie == 1) {
-                    this.sante.dyspraxie = true;
-                } else {
-                    this.sante.dyspraxie = false;
-                }
-                if (this.sante.troubles_de_attention == 1) {
-                    this.sante.troubles_de_attention = true;
-                } else {
-                    this.sante.troubles_de_attention = false;
-                }
-                if (this.sante.port_de_lunettes == 1) {
-                    this.sante.port_de_lunettes = true;
-                } else {
-                    this.sante.port_de_lunettes = false;
-                }
-                if (this.sante.lentilies_de_contact == 1) {
-                    this.sante.lentilies_de_contact = true;
-                } else {
-                    this.sante.lentilies_de_contact = false;
-                }
-                if (this.sante.psychologue == 1) {
-                    this.sante.psychologue = true;
-                } else {
-                    this.sante.psychologue = false;
-                }
-                if (this.sante.orthophoniste == 1) {
-                    this.sante.orthophoniste = true;
-                } else {
-                    this.sante.orthophoniste = false;
-                }
-                if (this.sante.kinesitherapeute == 1) {
-                    this.sante.kinesitherapeute = true;
-                } else {
-                    this.sante.kinesitherapeute = false;
-                }
-                this.sante.eleve_id = id;
-            } catch (error) {
-                console.error("Error fetching eleves:", error);
+            console.log(this.eleve);
+            this.sante = this.eleve.santes[0];
+            this.idSante = this.eleve.santes[0].id;
+            console.log(this.sante);
+            console.log(this.idSante);
+            if (this.eleve.droit_image == 1) {
+                this.droix_image == "oui"
+            } else {
+                this.droix_image = "non";
             }
+            if (this.sante.malade == 1) {
+                this.ismalade = "oui";
+            } else {
+                this.ismalade = "non";
+            }
+            if (this.sante.allergies == 1) {
+                this.isALLERGIES = "oui";
+            } else {
+                this.isALLERGIES = "non";
+            }
+            if (this.sante.asthme == 1) {
+                ;
+                this.isASTHME = "oui";
+            } else {
+                this.isASTHME = "non";
+            }
+            if (this.sante.diabete == 1) {
+                this.isDIABETE = "oui";
+            } else {
+                this.isDIABETE = "non";
+            }
+            if (this.sante.traitement_regulier == 1) {
+                this.istraitement = "oui";
+            } else {
+                this.istraitement = "non";
+            }
+            if (this.sante.antecedents_medicaux_ch == 1) {
+                this.isantecedents = "oui";
+            } else {
+                this.isantecedents = "non";
+            }
+            if (this.sante.prb_vision == 1) {
+                this.isvision = "oui";
+            } else {
+                this.isvision = "non";
+            }
+            if (this.sante.prb_audition == 1) {
+                this.isaudition = "oui";
+            } else {
+                this.isaudition = "non";
+            }
+            if (this.sante.atteint == 1) {
+                this.isatteint = "oui";
+            } else {
+                this.isatteint = "non";
+            }
+            if (this.sante.dyscalculie == 1) {
+                this.sante.dyscalculie = true;
+            } else {
+                this.sante.dyscalculie = false;
+            }
+            if (this.sante.dysgraphie == 1) {
+                this.sante.dysgraphie = true;
+            } else {
+                this.sante.dysgraphie = false;
+            }
+            if (this.sante.dyslexie == 1) {
+                this.sante.dyslexie = true;
+            } else {
+                this.sante.dyslexie = false;
+            }
+            if (this.sante.dysorthographie == 1) {
+                this.sante.dysorthographie = true;
+            } else {
+                this.sante.dysorthographie = false;
+            }
+            if (this.sante.dysphasie == 1) {
+                this.sante.dysphasie = true;
+            } else {
+                this.sante.dysphasie = false;
+            }
+            if (this.sante.dyspraxie == 1) {
+                this.sante.dyspraxie = true;
+            } else {
+                this.sante.dyspraxie = false;
+            }
+            if (this.sante.troubles_de_attention == 1) {
+                this.sante.troubles_de_attention = true;
+            } else {
+                this.sante.troubles_de_attention = false;
+            }
+            if (this.sante.port_de_lunettes == 1) {
+                this.sante.port_de_lunettes = true;
+            } else {
+                this.sante.port_de_lunettes = false;
+            }
+            if (this.sante.lentilies_de_contact == 1) {
+                this.sante.lentilies_de_contact = true;
+            } else {
+                this.sante.lentilies_de_contact = false;
+            }
+            if (this.sante.psychologue == 1) {
+                this.sante.psychologue = true;
+            } else {
+                this.sante.psychologue = false;
+            }
+            if (this.sante.orthophoniste == 1) {
+                this.sante.orthophoniste = true;
+            } else {
+                this.sante.orthophoniste = false;
+            }
+            if (this.sante.kinesitherapeute == 1) {
+                this.sante.kinesitherapeute = true;
+            } else {
+                this.sante.kinesitherapeute = false;
+            }
+            this.sante.eleve_id = id;
+
+
+
+            // 
+            // try {
+            //     const response = await axiosClient.get("/administratif/elevess/" + id);
+            //     this.eleve = response.data;
+            //     this.sante = this.eleve.santes[0];
+            //     this.idSante = this.eleve.santes[0].id;
+
+            //     this.sante.eleve_id = id;
+            // } catch (error) {
+            //     console.error("Error fetching eleves:", error);
+            // }
         },
-        async update() {
+        async update(id, ids) {
             try {
+                this.idEleve = id;
+                this.idSante = ids;
+                if (this.droix_image == "oui") {
+                    this.eleve.droit_image = true;
+                } else {
+                    this.eleve.droit_image = false;
+                }
                 const response = await axiosClient.put(
                     "/administratif/elevess/" + this.idEleve,
                     this.eleve
                 );
+                this.eleves = this.eleves.map((el) => {
+                    if (el.id === this.idEleve) {
+                        el = this.eleve;
+                        return {
+                            ...el,
+                        };
+                    }
+                    return el;
+                });
                 if (this.ismalade == "oui") {
                     this.sante.malade = true;
+                } else {
+                    this.sante.malade = false;
                 }
                 if (this.isALLERGIES == "oui") {
                     this.sante.allergies = true;
+                } else {
+                    this.sante.allergies = false;
                 }
                 if (this.isASTHME == "oui") {
                     this.sante.asthme = true;
+                } else {
+                    this.sante.asthme = false;
                 }
                 if (this.isDIABETE == "oui") {
                     this.sante.diabete = true;
+                } else {
+                    this.sante.diabete = false;
                 }
                 if (this.istraitement == "oui") {
                     this.sante.traitement_regulier = true;
+                } else {
+                    this.sante.traitement_regulier = false;
                 }
                 if (this.isantecedents == "oui") {
                     this.sante.antecedents_medicaux_ch = true;
+                } else {
+                    this.sante.antecedents_medicaux_ch = false;
                 }
                 if (this.isvision == "oui") {
                     this.sante.prb_vision = true;
+                } else {
+                    this.sante.prb_vision = false;
                 }
                 if (this.isaudition == "oui") {
                     this.sante.prb_audition = true;
+                } else {
+                    this.sante.prb_audition = false;
                 }
                 if (this.isatteint == "oui") {
                     this.sante.atteint = true;
-                }
-                if (this.isatteint == "oui") {
-                    this.sante.atteint = true;
+                } else {
+                    this.sante.atteint = false;
                 }
                 console.log(this.sante);
                 const response_sant = await axiosClient.put(
@@ -1361,19 +1395,70 @@ export default {
                 );
                 console.log(response_sant.data);
                 this.vide();
-                UIkit.modal('#modal-group-3').hide();
+                UIkit.modal('#modal-group-4-4').hide();
                 var modal = UIkit.modal('#modal-group-2');
                 if (modal) {
                     modal.show();
                 }
-                this.getEleveFromFammilles();
 
             } catch (error) {
                 console.error("Error fetching eleves:", error);
             }
         },
-        async remove(id, index) {
-            removeIteme(id, "Are you sure?", "/administratif/elevess/", this.eleves, this.getEleveFromFammilles);
+        async getEleve() {
+            try {
+                const response = await axiosClient.get("/administratif/elevess/" + this.idEleve);
+                this.eleve = response.data;
+                console.log(this.eleve);
+            } catch (error) {
+                console.error("Error fetching eleves:", error);
+            }
+        },
+        async remove(id) {
+            console.log("delete" + id);
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger",
+                },
+                buttonsStyling: false,
+            });
+
+            swalWithBootstrapButtons
+                .fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, delete it!",
+                    customClass: {
+                        confirmButton: "btn bg-danger  text-white",
+                        cancelButton: "btn bg-primary mr-5 text-white",
+                    },
+                    cancelButtonText: "No, cancel!",
+                    reverseButtons: true,
+                })
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            const res = await axiosClient.delete('/administratif/elevess/' + id);
+                            this.eleves = this.eleves.filter((el) => el.id !== id);
+                            console.log(res.data);
+                        } catch (error) {
+                            console.error("Error fetching eleves:", error);
+                        }
+                        swalWithBootstrapButtons
+                            .fire("Deleted!", "Your file has been deleted.", "success")
+                            .then((result) => {
+                                if (result.isConfirmed) {
+                                }
+                            });
+                    } else if (
+
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                    }
+                });
         },
         async getEleveFromFammilles() {
             try {

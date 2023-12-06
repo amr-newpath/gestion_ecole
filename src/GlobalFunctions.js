@@ -5,9 +5,7 @@ const removeIteme = async (
   id,
   title,
   url,
-  refesh = false,
-  arr = [],
-  additionalArgs
+  arr,
 ) => {
   console.log("delete" + id);
   const swalWithBootstrapButtons = Swal.mixin({
@@ -34,21 +32,21 @@ const removeIteme = async (
     })
     .then(async (result) => {
       if (result.isConfirmed) {
-        arr = [];
-        if (typeof additionalArgs === "function") {
-          additionalArgs();
-        }
-        try {
-          const res = await axiosClient.delete(url + id);
-          console.log(res.data);
-        } catch (error) {
-          console.error("Error fetching parents:", error);
-        }
+        console.log(arr);
+        // arr = [];
+        // if (typeof additionalArgs === "function") {
+        //   additionalArgs();
+        // }
+        // try {
+        //   const res = await axiosClient.delete(url + id);
+        //   console.log(res.data);
+        // } catch (error) {
+        //   console.error("Error fetching parents:", error);
+        // }
         swalWithBootstrapButtons
           .fire("Deleted!", "Your file has been deleted.", "success")
           .then((result) => {
             if (result.isConfirmed) {
-
             }
           });
       } else if (

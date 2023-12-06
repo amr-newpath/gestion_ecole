@@ -26,7 +26,7 @@
 
       <!--!! Gestion des eleves -->
 
-      <!-- <SidebarCollapsible
+      <SidebarCollapsible
         icon="mdi:shield-star-outline"
         title="Gestion des Elèves"
         :active="isCurrentPath('/pages')"
@@ -43,10 +43,10 @@
           icon="mdi:sh  ield-star-outline"
           :active="isCurrentRoute('Les comptes')"
         />
-      </SidebarCollapsible> -->
+      </SidebarCollapsible>
 
       <!--!! Gestion des parents -->
-      <!-- <SidebarCollapsible
+      <SidebarCollapsible
         icon="mdi:shield-star-outline"
         title="Gestion des Parents"
         :active="isCurrentPath('/index')"
@@ -63,7 +63,7 @@
           icon="mdi:sh  ield-star-outline"
           :active="isCurrentRoute('Les comptes')"
         />
-      </SidebarCollapsible> -->
+      </SidebarCollapsible>
 
       <SidebarLink :to="{ name: 'ListElevesAdmin' }" :active="isCurrentRoute('ListElevesAdmin')" icon="pajamas:account"
         title="Gestion des eleves" />
@@ -123,8 +123,8 @@
       <SidebarLink :to="{ name: 'ListEleves' }" :active="isCurrentRoute('ListEleves')" icon="ph:student-bold"
         title="Gestion des élèves" />
 
-      <SidebarLink :to="{ name: 'ListTuteurs' }" :active="isCurrentRoute('ListTuteurs')" icon="ri:parent-line"
-        @click="test()" title="Gestion des tuteurs" />
+      <!-- <SidebarLink :to="{ name: 'ListTuteurs' }" :active="isCurrentRoute('ListTuteurs')" icon="ri:parent-line"
+        @click="test()" title="Gestion des tuteurs" /> -->
 
 
       <!-- <button type="button" @click="hello" :class="[
@@ -212,8 +212,8 @@
       /> -->
 
 
-      <SidebarLink :to="{ name: 'CreatePlanning' }" :active="isCurrentRoute('CreatePlanning')" icon="pajamas:planning"
-        title="Gestion des plannings" />
+      <!-- <SidebarLink :to="{ name: 'CreatePlanning' }" :active="isCurrentRoute('CreatePlanning')" icon="pajamas:planning"
+        title="Gestion des plannings" /> -->
 
       <SidebarLink :to="{ name: 'AdministratifProfile' }" :active="isCurrentRoute('AdministratifProfile')"
         icon="gg:profile" title="Profile">

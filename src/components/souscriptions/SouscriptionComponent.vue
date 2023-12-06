@@ -63,14 +63,28 @@
                     </div>
                     <div class="flex flex-wrap -mx-3 mb-2 sm:px-3">
                         <div class="w-full px-3 mb-4 sm:w-1/2">
-                            <label class="block text-sm font-medium text-gray-600 mb-2">Montant : {{
+                            <label class="block text-sm font-medium text-gray-600 mb-2">
+                                Montant : {{
+                                    eleve_service.service_id != null && service.annee_scolaire_services != null
+                                    ? service.annee_scolaire_services.price
+                                    : null
+                                }}
+                            </label>
+                            <label class="block text-sm font-medium text-gray-600 mb-2" v-if="eleve_service.remise != null">
+                                Montant après remise : {{
+                                    eleve_service.service_id != null && service.annee_scolaire_services != null
+                                    ? service.annee_scolaire_services.price - eleve_service.remise
+                                    : null
+                                }}
+                            </label>
+                            <!-- <label class="block text-sm font-medium text-gray-600 mb-2">Montant : {{
                                 eleve_service.service_id != null ? service.annee_scolaire_services != null ?
                                 service.annee_scolaire_services.price : null : null }}</label>
                             <label class="block text-sm font-medium text-gray-600 mb-2"
                                 v-if="eleve_service.remise != null">Montant aprés remise : {{ eleve_service.service_id !=
                                     null ? service.annee_scolaire_services != null ? service.annee_scolaire_services.price -
                                         eleve_service.remise : null : null
-                                }}</label>
+                                }}</label> -->
                         </div>
                     </div>
                 </div>
@@ -109,10 +123,8 @@
                                     <th class=" text-white font-bold text-center" style="font-weight: bold;">Date Fin</th>
                                     <th class=" text-white font-bold text-center" style="font-weight: bold;">Périod</th>
                                     <th class=" text-white font-bold text-center" style="font-weight: bold;">Montant</th>
-                                    <th class=" text-white font-bold text-center" style="font-weight: bold;">Date echiance
-                                    </th>
-                                    <th class=" text-white font-bold text-center" style="font-weight: bold;">Date Payement
-                                    </th>
+                                    <th class=" text-white font-bold text-center" style="font-weight: bold;">Date Limite Paiement</th>
+                                    <th class=" text-white font-bold text-center" style="font-weight: bold;">Date echiance</th>
                                     <th class=" text-white font-bold text-center" style="font-weight: bold;">Action</th>
                                 </tr>
                             </thead>

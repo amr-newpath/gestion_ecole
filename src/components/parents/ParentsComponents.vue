@@ -31,8 +31,7 @@
                         <h6 class="text-blueGray-700 text-xl font-bold uk-modal-title">Ajouter Parent</h6>
                     </div>
                 </div>
-                <form method="post" @submit.prevent="idParent == 0 ? add : add"
-                    class="flex-auto px-4 lg:px-10  pt-0 uk-modal-body">
+                <form method="post" class="flex-auto px-4 lg:px-10  pt-0 uk-modal-body">
                     <div class="row  mt-1">
                         <div class="col-lg-3 my-3">
                             <!-- upload image -->
@@ -200,9 +199,9 @@
                                 <button class="uk-button uk-button-default uk-modal-close" @click="redirect" id="btn2s"
                                     type="button">Annuler</button>
                                 <button type="button" @click.prevent="add" id="btn1s"
-                                    class="uk-button uk-button-primary mx-3" v-show="idParent == 0">Ajouter</button>
+                                    class="uk-button uk-button-primary mx-3" v-if="idParent == 0">Ajouter</button>
                                 <button type="button" @click.prevent="update" id="btn3s" class="uk-button btn-warning mx-3"
-                                    v-show="idParent != 0">Mettre à jour</button>
+                                    v-else>Mettre à jour</button>
                             </div>
                         </div>
                     </div>
@@ -276,7 +275,7 @@
 </template>
 <script>
 import axiosClient from "../../axios";
-import removeIteme from "../../GlobalFunctions";
+import Swal from "sweetalert2";
 import Pagination from '@/components/Pagination.vue'
 import { useToast } from "vue-toast-notification";
 const $toast = useToast();
@@ -300,15 +299,15 @@ export default {
                 phone: "",
                 tel: "",
                 adresse: "",
-                civilite: "masculin",
-                genre: "homme",
+                civilite: "M.",
+                genre: "M",
                 authorisationderecup: false,
                 responsablelegale: false,
                 Gardelegale: false,
                 payeur: false,
                 contacturgence: false,
                 image: "",
-                liendeparente_id: 1,
+                liendeparente_id: 2,
                 famille_id: null,
             },
             linedeparentes: [],
@@ -350,7 +349,7 @@ export default {
         // this.idFamille = localStorage.getItem('id_famile');
         this.idFamille = this.FamilleId;
         console.log(this.idFamille);
-        this.getParentFromFammilles(this.idFamille);
+        this.getParentFromFammilles();
         this.getNationalities();
         this.getLinedeParents();
     },
@@ -374,15 +373,15 @@ export default {
                 phone: "",
                 tel: "",
                 adresse: "",
-                civilite: "masculin",
-                genre: "homme",
+                civilite: "M.",
+                genre: "M",
                 authorisationderecup: false,
                 responsablelegale: false,
                 Gardelegale: false,
                 payeur: false,
                 contacturgence: false,
                 image: "",
-                liendeparente_id: 1,
+                liendeparente_id: 2,
                 famille_id: null,
             };
         },
@@ -395,7 +394,6 @@ export default {
                 this.getParentFromFammilles();
                 return;
             }
-
             this.parents = this.parents.filter((parent) => {
                 const fullName = `${parent.nom} ${parent.prenom} ${parent.profession} ${parent.nat} ${parent.email} ${parent.tel} ${parent.phone} ${parent.genre} ${parent.civilite} ${parent.famille.nom} ${parent.liendeparente.type} ${parent.adresse}`.toLowerCase();
                 return fullName.includes(query);
@@ -436,6 +434,8 @@ export default {
                     "/administratif/parentes/createacount",
                     this.parent
                 );
+                console.log(response.data.data);
+                this.parents.push(response.data.data);
                 this.parent = {
                     nom: "",
                     prenom: "",
@@ -445,15 +445,15 @@ export default {
                     phone: "",
                     tel: "",
                     adresse: "",
-                    civilite: "masculin",
-                    genre: "homme",
+                    civilite: "M.",
+                    genre: "M",
                     authorisationderecup: false,
                     responsablelegale: false,
                     Gardelegale: false,
                     payeur: false,
                     contacturgence: false,
                     image: "",
-                    liendeparente_id: 1,
+                    liendeparente_id: 2,
                     famille_id: null,
                 };
                 UIkit.modal('#modal-group-3').hide();
@@ -461,7 +461,6 @@ export default {
                 if (modal) {
                     modal.show();
                 }
-                this.getParentFromFammilles();
                 $toast.success("créez une parent avec succès !", {
                     position: "bottom-right",
                     duration: 3000,
@@ -526,6 +525,16 @@ export default {
                     "/administratif/parentes/" + this.idParent,
                     this.parent
                 );
+                this.parents = this.parents.map((el) => {
+                    if (el.id === this.idParent) {
+                        el = this.parent;
+                        return {
+                            ...el,
+                        };
+                    }
+                    return el;
+                });
+                this.idParent = 0;
                 this.parent = {
                     nom: "",
                     prenom: "",
@@ -535,24 +544,22 @@ export default {
                     phone: "",
                     tel: "",
                     adresse: "",
-                    civilite: "masculin",
-                    genre: "homme",
+                    civilite: "M.",
+                    genre: "M",
                     authorisationderecup: false,
                     responsablelegale: false,
                     Gardelegale: false,
                     payeur: false,
                     contacturgence: false,
                     image: "",
-                    liendeparente_id: 1,
+                    liendeparente_id: 2,
                     famille_id: null,
                 };
-                this.idParent = 0;
                 UIkit.modal('#modal-group-3').hide();
                 var modal = UIkit.modal('#modal-group-2');
                 if (modal) {
                     modal.show();
                 }
-                this.getParentFromFammilles();
 
             } catch (error) {
                 console.error("Error fetching parents:", error);
@@ -569,7 +576,50 @@ export default {
             }
         },
         async remove(id) {
-            removeIteme(id, "Are you sure?", "/administratif/parentes/", this.parents, this.getParentFromFammilles);
+            console.log("delete" + id);
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger",
+                },
+                buttonsStyling: false,
+            });
+
+            swalWithBootstrapButtons
+                .fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, delete it!",
+                    customClass: {
+                        confirmButton: "btn bg-danger  text-white",
+                        cancelButton: "btn bg-primary mr-5 text-white",
+                    },
+                    cancelButtonText: "No, cancel!",
+                    reverseButtons: true,
+                })
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            const res = await axiosClient.delete('/administratif/parentes/' + id);
+                            this.parents = this.parents.filter((el) => el.id !== id);
+                            console.log(res.data);
+                        } catch (error) {
+                            console.error("Error fetching parents:", error);
+                        }
+                        swalWithBootstrapButtons
+                            .fire("Deleted!", "Your file has been deleted.", "success")
+                            .then((result) => {
+                                if (result.isConfirmed) {
+                                }
+                            });
+                    } else if (
+
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                    }
+                });
         },
         async getNationalities() {
             try {
